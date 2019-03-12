@@ -94,83 +94,110 @@ $(document).ready(function(){initNavTree('structmsg__t.html','');});
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="msg_8h_source.html">msg.h</a>&gt;</code></p>
+<div class="dynheader">
+Collaboration diagram for msg_t:</div>
+<div class="dyncontent">
+<div class="center"><img src="structmsg__t__coll__graph.png" border="0" usemap="#msg__t_coll__map" alt="Collaboration graph"/></div>
+<map name="msg__t_coll__map" id="msg__t_coll__map">
+<area shape="rect"  title=" " alt="" coords="5,95,68,121"/>
+<area shape="rect"  href="structtlv__t.html" title=" " alt="" coords="11,5,62,32"/>
+</map>
+<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:a3f86b2fdc165f662a1d3a69ab9cb5fe2"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmsg__t.html#a3f86b2fdc165f662a1d3a69ab9cb5fe2">magic</a></td></tr>
-<tr class="separator:a3f86b2fdc165f662a1d3a69ab9cb5fe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ae211b923c0ca2de98c2a6b3ec4c6b1"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmsg__t.html#a1ae211b923c0ca2de98c2a6b3ec4c6b1">version</a></td></tr>
-<tr class="separator:a1ae211b923c0ca2de98c2a6b3ec4c6b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a92fb67cb6d873cedc8c09a2d901396a2"><td class="memItemLeft" align="right" valign="top">unsigned short&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmsg__t.html#a92fb67cb6d873cedc8c09a2d901396a2">length</a></td></tr>
-<tr class="separator:a92fb67cb6d873cedc8c09a2d901396a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15ab326eb76ae067ffbf0e770b14350e"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmsg__t.html#a15ab326eb76ae067ffbf0e770b14350e">body</a></td></tr>
-<tr class="separator:a15ab326eb76ae067ffbf0e770b14350e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30cb57948d3b95ab0c1c2d523df966b6"><td class="memItemLeft" align="right" valign="top">unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmsg__t.html#a30cb57948d3b95ab0c1c2d523df966b6">magic</a></td></tr>
+<tr class="separator:a30cb57948d3b95ab0c1c2d523df966b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a278ac8112eb4d891fdffa2a26fb4de69"><td class="memItemLeft" align="right" valign="top">unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmsg__t.html#a278ac8112eb4d891fdffa2a26fb4de69">version</a></td></tr>
+<tr class="separator:a278ac8112eb4d891fdffa2a26fb4de69"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1892eba2086d12ac2b09005aeb09ea3b"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmsg__t.html#a1892eba2086d12ac2b09005aeb09ea3b">length</a></td></tr>
+<tr class="separator:a1892eba2086d12ac2b09005aeb09ea3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a768565c3ed6cd109d094410f8a5008"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtlv__t.html">tlv_t</a> **&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmsg__t.html#a9a768565c3ed6cd109d094410f8a5008">body</a></td></tr>
+<tr class="separator:a9a768565c3ed6cd109d094410f8a5008"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2f9cbf3d6937a7e39c21a89b6b16aa1"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmsg__t.html#ae2f9cbf3d6937a7e39c21a89b6b16aa1">tlv_nb</a></td></tr>
+<tr class="separator:ae2f9cbf3d6937a7e39c21a89b6b16aa1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="msg_8h_source.html#l00027">27</a> of file <a class="el" href="msg_8h_source.html">msg.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="msg_8h_source.html#l00077">77</a> of file <a class="el" href="msg_8h_source.html">msg.h</a>.</p>
 </div><h2 class="groupheader">Field Documentation</h2>
-<a id="a15ab326eb76ae067ffbf0e770b14350e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a15ab326eb76ae067ffbf0e770b14350e">&#9670;&nbsp;</a></span>body</h2>
+<a id="a9a768565c3ed6cd109d094410f8a5008"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a768565c3ed6cd109d094410f8a5008">&#9670;&nbsp;</a></span>body</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">char* body</td>
+          <td class="memname"><a class="el" href="structtlv__t.html">tlv_t</a>** body</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="msg_8h_source.html#l00031">31</a> of file <a class="el" href="msg_8h_source.html">msg.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="msg_8h_source.html#l00081">81</a> of file <a class="el" href="msg_8h_source.html">msg.h</a>.</p>
 
 </div>
 </div>
-<a id="a92fb67cb6d873cedc8c09a2d901396a2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a92fb67cb6d873cedc8c09a2d901396a2">&#9670;&nbsp;</a></span>length</h2>
+<a id="a1892eba2086d12ac2b09005aeb09ea3b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1892eba2086d12ac2b09005aeb09ea3b">&#9670;&nbsp;</a></span>length</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned short length</td>
+          <td class="memname">uint16_t length</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="msg_8h_source.html#l00030">30</a> of file <a class="el" href="msg_8h_source.html">msg.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="msg_8h_source.html#l00080">80</a> of file <a class="el" href="msg_8h_source.html">msg.h</a>.</p>
 
 </div>
 </div>
-<a id="a3f86b2fdc165f662a1d3a69ab9cb5fe2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3f86b2fdc165f662a1d3a69ab9cb5fe2">&#9670;&nbsp;</a></span>magic</h2>
+<a id="a30cb57948d3b95ab0c1c2d523df966b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30cb57948d3b95ab0c1c2d523df966b6">&#9670;&nbsp;</a></span>magic</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">char magic</td>
+          <td class="memname">unsigned char magic</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="msg_8h_source.html#l00028">28</a> of file <a class="el" href="msg_8h_source.html">msg.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="msg_8h_source.html#l00078">78</a> of file <a class="el" href="msg_8h_source.html">msg.h</a>.</p>
 
 </div>
 </div>
-<a id="a1ae211b923c0ca2de98c2a6b3ec4c6b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1ae211b923c0ca2de98c2a6b3ec4c6b1">&#9670;&nbsp;</a></span>version</h2>
+<a id="ae2f9cbf3d6937a7e39c21a89b6b16aa1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2f9cbf3d6937a7e39c21a89b6b16aa1">&#9670;&nbsp;</a></span>tlv_nb</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">char version</td>
+          <td class="memname">size_t tlv_nb</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="msg_8h_source.html#l00029">29</a> of file <a class="el" href="msg_8h_source.html">msg.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="msg_8h_source.html#l00082">82</a> of file <a class="el" href="msg_8h_source.html">msg.h</a>.</p>
+
+</div>
+</div>
+<a id="a278ac8112eb4d891fdffa2a26fb4de69"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a278ac8112eb4d891fdffa2a26fb4de69">&#9670;&nbsp;</a></span>version</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned char version</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="msg_8h_source.html#l00079">79</a> of file <a class="el" href="msg_8h_source.html">msg.h</a>.</p>
 
 </div>
 </div>

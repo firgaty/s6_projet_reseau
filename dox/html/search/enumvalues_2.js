@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['short_5fhello',['SHORT_HELLO',['../msg_8h.html#a0a8469d0f0438d596ce4a98b2eb5ac91a265d99ebcc207fdd23325193b64c546d',1,'msg.h']]]
+  ['go_5faway',['GO_AWAY',['../msg_8h.html#a73dc891ee7355dfbd84d75fdc004a9e0a30e835433b60ef487188a92c02347253',1,'msg.h']]]
 ];

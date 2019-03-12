@@ -10,6 +10,7 @@
  */
 #define _GNU_SOURCE
 
+#include <inttypes.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <stdio.h>
@@ -19,30 +20,25 @@
 #include <unistd.h>
 
 #define MSG_SIZE 4096
+#define MSG_MAGIC 93
+#define MSG_VERSION 2
 
-typedef enum { SHORT_HELLO = 0, LONG_HELLO } HELLO_TYPE;
+typedef enum { SHORT_HELLO = 0, LONG_HELLO = 1 } HELLO_TYPE;
 
-typedef enum { VISIBLE = 0, HIDDEN } DATA_TYPE;
+typedef enum { VISIBLE = 0, HIDDEN = 1 } DATA_TYPE;
 
 typedef enum {
-    PAD1 = 0,
-    PADN,
-    HELLO,
-    NEIGHBOUR,
-    DATA,
-    ACK,
-    GO_AWAY,
-    WARNING
+  PAD1 = 0,
+  PADN = 1,
+  HELLO = 2,
+  NEIGHBOUR = 3,
+  DATA = 4,
+  ACK = 5,
+  GO_AWAY = 6,
+  WARNING = 7
 } TLV_TYPE;
 
-typedef struct {
-  unsigned char magic;
-  unsigned char version;
-  unsigned short length;
-  char *body;
-} msg_t;
-
-typedef struct {
+typedef struct tlv_t {
   unsigned char type;
   unsigned char length;
   union {
@@ -51,22 +47,22 @@ typedef struct {
     } pad_n;
     struct hello {
       unsigned char type;
-      unsigned long long source_id;
-      unsigned long long dest_id;
+      uint64_t source_id;
+      uint64_t dest_id;
     } hello;
     struct neighbour {
       char *ip;
-      unsigned int port;
+      uint16_t port;
     } neighbour;
     struct data {
-      unsigned long long sender_id;
-      unsigned long nonce;
+      uint64_t sender_id;
+      uint32_t nonce;
       unsigned char type;
       char *data;
     } data;
     struct ack {
-      unsigned long long sender_id;
-      unsigned long nonce;
+      uint64_t sender_id;
+      uint32_t nonce;
     } ack;
     struct go_away {
       char code;
@@ -77,6 +73,14 @@ typedef struct {
     } warning;
   } body;
 } tlv_t;
+
+typedef struct {
+  unsigned char magic;
+  unsigned char version;
+  uint16_t length;
+  tlv_t **body;
+  size_t tlv_nb;
+} msg_t;
 
 /**
  * @brief Generates a TLV to be ignored at reception with an empty body.
@@ -107,8 +111,7 @@ tlv_t *gen_tlv_padn(unsigned int n);
  * ignored.
  * @return tlv_t* Hello TLV.
  */
-tlv_t *gen_tlv_hello(HELLO_TYPE type, unsigned long long source_id,
-                     unsigned long long dest_id);
+tlv_t *gen_tlv_hello(HELLO_TYPE type, uint64_t source_id, uint64_t dest_id);
 
 /**
  * @brief Generates a Neighbour TLV
@@ -117,7 +120,7 @@ tlv_t *gen_tlv_hello(HELLO_TYPE type, unsigned long long source_id,
  * @param port Port of the pair.
  * @return tlv_t* Neighbour TLV
  */
-tlv_t *gen_tlv_neighbour(char *ip, unsigned int port);
+tlv_t *gen_tlv_neighbour(char *ip, uint16_t port);
 
 /**
  * @brief Generates a Data TLV.
@@ -131,8 +134,8 @@ tlv_t *gen_tlv_neighbour(char *ip, unsigned int port);
  * @param data Data/Message to send.
  * @return tlv_t* Data TLV.
  */
-tlv_t *gen_tlv_data(unsigned long long sender_id,
-                    DATA_TYPE type, char *data);
+tlv_t *gen_tlv_data(uint64_t sender_id, uint32_t nonce, DATA_TYPE type,
+                    char *data);
 
 /**
  * @brief Generates an Ack TLV.
@@ -141,10 +144,10 @@ tlv_t *gen_tlv_data(unsigned long long sender_id,
  * @param nonce Nonce of teh corresponding Data TLV.
  * @return tlv_t* Ack TLV.
  */
-tlv_t *gen_tlv_ack(unsigned long long sender_id, unsigned long nonce);
+tlv_t *gen_tlv_ack(uint64_t sender_id, uint32_t nonce);
 
 /**
- * @brief Generates a GoAway TLV
+ * @brief Generates a GoAway TLV.
  *
  * @param code
  *  0 : Reason Unknown\n
@@ -155,12 +158,28 @@ tlv_t *gen_tlv_ack(unsigned long long sender_id, unsigned long nonce);
  * @param contains_message If 0, the message will be ignored.
  * @param message Debug message to send.
  * @param message_len Length of the message.
- * @return tlv_t*
+ * @return tlv_t* GoAway TLV.
  */
 tlv_t *gen_tlv_go_away(char code, short contains_message, char *message,
                        size_t message_len);
 
+/**
+ * @brief Generates a Warning TLV.
+ *
+ * @param message Warning message.
+ * @param message_len Length of the message;
+ * @return tlv_t* Warning TLV.
+ */
 tlv_t *gen_tlv_warning(char *message, size_t message_len);
+
+/**
+ * @brief Generates a message.
+ *
+ * @param ts Array of TLV.
+ * @param ts_size Size of the array.
+ * @return msg_t* Message.
+ */
+msg_t *gen_msg(tlv_t **ts, size_t ts_size);
 
 /**
  * @brief Prints the TLV displaying all useful informations.
@@ -171,7 +190,7 @@ void print_tlv(tlv_t *t);
 
 /**
  * @brief Prints the message displaying allthe useful informations.
- * 
+ *
  * @param m Message to print.
  */
-void pritn_msg(msg_t *m);
+void print_msg(msg_t *m);

@@ -1,4 +1,4 @@
-NAME ?= mpsh
+NAME ?= client
 
 CC ?= gcc
 CFLAGS ?= -Wall -g 
@@ -14,7 +14,7 @@ SRC := $(wildcard $(SRC_DIR)/*.c)
 all: $(NAME)
 
 $(NAME): $(SRC)
-	@$(CC) $(CFLAGS) $(LDLIBS) $(SRC) -o $(NAME) -lfl
+	@$(CC) $(CFLAGS) $(LDLIBS) $(SRC) -o $(NAME)
 
 clean:
 
