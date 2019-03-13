@@ -24,7 +24,7 @@ tlv_t *gen_tlv_pad1() {
 tlv_t *gen_tlv_padn(unsigned int n) {
   tlv_t *out = malloc(sizeof(tlv_t));
   out->type = (unsigned char)PADN;
-  out->length = n * 8;
+  out->length = n;
   out->body.pad_n.zeroes = n;
   return out;
 }
@@ -90,6 +90,20 @@ tlv_t *gen_tlv_warning(char *message, size_t message_len) {
   return out;
 }
 
+msg_t *gen_msg(tlv_t **ts, size_t ts_size) {
+  msg_t *m = malloc(sizeof(msg_t));
+  m->magic = MSG_MAGIC;
+  m->version = MSG_VERSION;
+  m->tlv_nb = ts_size;
+  // TODO: Gérer la taille maximale d'un message.
+  m->body = ts;
+  m->length = 0;
+  for (int i = 0; i < ts_size; i++) {
+    m->length += 16 + ts[i]->length;
+  }
+  return m;
+}
+
 void print_tlv(tlv_t *t) {
   printf("---\n");
   switch ((int)t->type) {
@@ -97,34 +111,35 @@ void print_tlv(tlv_t *t) {
     printf("TLV type: Pad1\n");
     break;
   case PADN:
-    printf("TLV type: PadN\nN: %d\n", t->body.pad_n.zeroes);
+    printf("TLV type: PadN\nLength: %d\nN: %d\n", t->length,
+           t->body.pad_n.zeroes);
     break;
   case HELLO:
-    printf("TLV type: Hello\nHello type: %d\nSource ID: %ld\n",
-           (int)t->body.hello.type, t->body.hello.source_id);
+    printf("TLV type: Hello\nLength: %d\nHello type: %d\nSource ID: %ld\n",
+           t->length, (int)t->body.hello.type, t->body.hello.source_id);
     if (t->body.hello.type == LONG_HELLO)
       printf("Destination ID: %ld\n", t->body.hello.dest_id);
     break;
   case NEIGHBOUR:
-    printf("TLV type: Neighbour\nIP: %s\nPort: %d\n", t->body.neighbour.ip,
-           t->body.neighbour.port);
+    printf("TLV type: Neighbour\nLength: %d\nIP: %s\nPort: %d\n", t->length,
+           t->body.neighbour.ip, t->body.neighbour.port);
     break;
   case DATA:
-    printf("TLV type: Data\nSender ID: %ld\nNonce: %d\nType: "
+    printf("TLV type: Data\nLength: %d\nSender ID: %ld\nNonce: %d\nType: "
            "%d\nData:\n***\n%s\n***\n",
-           t->body.data.sender_id, t->body.data.nonce, (int)t->body.data.type,
-           t->body.data.data);
+           t->length, t->body.data.sender_id, t->body.data.nonce,
+           (int)t->body.data.type, t->body.data.data);
     break;
   case ACK:
-    printf("TLV type: Ack\nSender ID: %ld\nNonce: %d\n", t->body.ack.sender_id,
-           t->body.ack.nonce);
+    printf("TLV type: Ack\nLength: %d\nSender ID: %ld\nNonce: %d\n", t->length,
+           t->body.ack.sender_id, t->body.ack.nonce);
     break;
   case GO_AWAY:
-    printf("TLV type: GoAway\nCode: %d\nMessage:\n***\n%s\n***\n",
-           (int)t->body.go_away.code, t->body.go_away.message);
+    printf("TLV type: GoAway\nLength: %d\nCode: %d\nMessage:\n***\n%s\n***\n",
+           t->length, (int)t->body.go_away.code, t->body.go_away.message);
     break;
   case WARNING:
-    printf("TLV type: Warning\nMessage:\n***\n%s\n***\n",
+    printf("TLV type: Warning\nLength: %d\nMessage:\n***\n%s\n***\n", t->length,
            t->body.warning.message);
   default:
     perror("TLV type not recognized...");
@@ -140,4 +155,99 @@ void print_msg(msg_t *m) {
     print_tlv(m->body[i]);
   }
   printf("===\n");
+}
+
+// TODO
+size_t msg_to_char_array(msg_t *m, char **addr) {
+  unsigned long ptr = 0;
+  *addr = malloc(sizeof(char) * (m->length + 2));
+
+  (*addr)[ptr++] = m->magic;
+  (*addr)[ptr++] = m->version;
+  (*addr)[ptr++] = (m->length >> 8) & 0xFF;
+  (*addr)[ptr++] = m->length & 0xFF;
+  // TODO TLV
+  return 0;
+}
+
+// TODO
+size_t char_array_to_msg(char *s, msg_t **addr) {
+  size_t size = 0;
+  unsigned long ptr = 0;
+  *addr = malloc(sizeof(msg_t));
+  (*addr)->magic = s[ptr++];
+  (*addr)->version = s[ptr++];
+  (*addr)->length = s[ptr++] << 8;
+  (*addr)->length = s[ptr++] + (*addr)->length;
+  // TODO TLV
+  return size;
+}
+
+size_t tlv_to_char_array(tlv_t *t, char **addr, unsigned long *ptr,
+                         size_t max_ptr) {
+  (*addr)[(*ptr)++] = t->type;
+  (*addr)[(*ptr)++] = t->length;
+
+  switch (t->type) {
+  case PAD1:
+    return 0;
+    break;
+  case PADN:
+    memcpy((*addr + *ptr), &(t->body.pad_n), t->length);
+    break;
+  case HELLO:
+    memcpy((*addr + *ptr), &(t->body.hello), t->length);
+    break;
+  case NEIGHBOUR:
+    memcpy((*addr + *ptr), &(t->body.neighbour), t->length);
+    break;
+  case DATA:
+    memcpy((*addr + *ptr), &(t->body.data), t->length);
+    break;
+  case ACK:
+    memcpy((*addr + *ptr), &(t->body.ack), t->length);
+    break;
+  case GO_AWAY:
+    memcpy((*addr + *ptr), &(t->body.go_away), t->length);
+    break;
+  case WARNING:
+    memcpy((*addr + *ptr), &(t->body.warning), t->length);
+    break;
+  default:
+    return 0;
+    break;
+  }
+
+  return t->length;
+}
+
+size_t char_array_to_tlv(char *s, tlv_t **addr, unsigned long *ptr,
+                         size_t max_ptr) {
+  *addr = malloc(sizeof(tlv_t *));
+  (*addr)->type = s[(*ptr)++];
+  (*addr)->length = s[(*ptr)++];
+
+  switch ((*addr)->type) {
+  case PAD1:
+    break;
+  case PADN:
+    memcpy(&((*addr)->body.pad_n), (s + *ptr), (*addr)->length);
+  case HELLO:
+    memcpy(&((*addr)->body.hello), (s + *ptr), (*addr)->length);
+  case NEIGHBOUR:
+    memcpy(&((*addr)->body.neighbour), (s + *ptr), (*addr)->length);
+  case DATA:
+    memcpy(&((*addr)->body.data), (s + *ptr), (*addr)->length);
+  case ACK:
+    memcpy(&((*addr)->body.data), (s + *ptr), (*addr)->length);
+  case GO_AWAY:
+    memcpy(&((*addr)->body.go_away), (s + *ptr), (*addr)->length);
+  case WARNING:
+    memcpy(&((*addr)->body.warning), (s + *ptr), (*addr)->length);
+  default:
+    // TODO : implement error.
+    break;
+  }
+  *ptr += (*addr)->length;
+  return 0;
 }

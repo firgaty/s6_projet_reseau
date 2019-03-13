@@ -6,6 +6,7 @@ var msg_8h =
     [ "MSG_MAGIC", "msg_8h.html#aa9ffa836affaa6041250981c2eb83907", null ],
     [ "MSG_SIZE", "msg_8h.html#ad4d025ecf1bdbf8b244ca688df8e478d", null ],
     [ "MSG_VERSION", "msg_8h.html#aa65547aa6faa39456425ba7e0e6c4642", null ],
+    [ "msg_t", "msg_8h.html#a928de39fa56d656f7c6c92d030b36638", null ],
     [ "tlv_t", "msg_8h.html#a315a3efdc490d6d7bcdaf6787c3f9318", null ],
     [ "DATA_TYPE", "msg_8h.html#aa082c000e4eff6ed512714ea0a33d27b", [
       [ "VISIBLE", "msg_8h.html#aa082c000e4eff6ed512714ea0a33d27babb22a6fcb7f208995b092f12d388786c", null ],
@@ -16,6 +17,7 @@ var msg_8h =
       [ "LONG_HELLO", "msg_8h.html#a0a8469d0f0438d596ce4a98b2eb5ac91ada769486c3c4c7f4429f779ef0581266", null ]
     ] ],
     [ "TLV_TYPE", "msg_8h.html#a73dc891ee7355dfbd84d75fdc004a9e0", [
+      [ "UNDEFINED", "msg_8h.html#a73dc891ee7355dfbd84d75fdc004a9e0a605159e8a4c32319fd69b5d151369d93", null ],
       [ "PAD1", "msg_8h.html#a73dc891ee7355dfbd84d75fdc004a9e0a7af380b5255ed8fbb4f1943b92048b15", null ],
       [ "PADN", "msg_8h.html#a73dc891ee7355dfbd84d75fdc004a9e0a4a0ff544fe0cb8cbe1a8e08e7e09f0f4", null ],
       [ "HELLO", "msg_8h.html#a73dc891ee7355dfbd84d75fdc004a9e0a572e2128aeb8cc392386eb1610a1fada", null ],
@@ -25,6 +27,8 @@ var msg_8h =
       [ "GO_AWAY", "msg_8h.html#a73dc891ee7355dfbd84d75fdc004a9e0a30e835433b60ef487188a92c02347253", null ],
       [ "WARNING", "msg_8h.html#a73dc891ee7355dfbd84d75fdc004a9e0a984de77c680eaff141ec910e25568a81", null ]
     ] ],
+    [ "char_array_to_msg", "msg_8h.html#a0c491008533648ce7bed3eb4e93950e4", null ],
+    [ "char_array_to_tlv", "msg_8h.html#a9e06019aa8310203a38fc5c09b18c88e", null ],
     [ "gen_msg", "msg_8h.html#ad5b966805db74645006ece2db01b807b", null ],
     [ "gen_tlv_ack", "msg_8h.html#a464108eb50f8c5bb568b82714b2eee94", null ],
     [ "gen_tlv_data", "msg_8h.html#af830b4bf9a8e6d7fcb43fa989a5cfb94", null ],
@@ -34,6 +38,8 @@ var msg_8h =
     [ "gen_tlv_pad1", "msg_8h.html#af678c123874b5f4f357eb915b37783e5", null ],
     [ "gen_tlv_padn", "msg_8h.html#ac69bc87e57627aeec61efc97300002b5", null ],
     [ "gen_tlv_warning", "msg_8h.html#a169a61d091445e741e40e936125f40c4", null ],
+    [ "msg_to_char_array", "msg_8h.html#ab2859f03b4048d1af03cfca625750599", null ],
     [ "print_msg", "msg_8h.html#a3b291f96982e62b4783e2d207e3e5fe4", null ],
-    [ "print_tlv", "msg_8h.html#a9efdd03eb510bbbffe14198e78f2aaaa", null ]
+    [ "print_tlv", "msg_8h.html#a9efdd03eb510bbbffe14198e78f2aaaa", null ],
+    [ "tlv_to_char_array", "msg_8h.html#ae5cbac733464607bcea36acce2a46155", null ]
 ];

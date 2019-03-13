@@ -8,6 +8,9 @@
  * @copyright Copyright (c) 2019
  *
  */
+#ifndef MSG_H
+#define MSG_H
+
 #define _GNU_SOURCE
 
 #include <inttypes.h>
@@ -28,6 +31,7 @@ typedef enum { SHORT_HELLO = 0, LONG_HELLO = 1 } HELLO_TYPE;
 typedef enum { VISIBLE = 0, HIDDEN = 1 } DATA_TYPE;
 
 typedef enum {
+  UNDEFINED = -1,
   PAD1 = 0,
   PADN = 1,
   HELLO = 2,
@@ -74,7 +78,7 @@ typedef struct tlv_t {
   } body;
 } tlv_t;
 
-typedef struct {
+typedef struct msg_t {
   unsigned char magic;
   unsigned char version;
   uint16_t length;
@@ -194,3 +198,51 @@ void print_tlv(tlv_t *t);
  * @param m Message to print.
  */
 void print_msg(msg_t *m);
+
+/**
+ * @brief Transforms the message into a char array.
+ * 
+ * It's the dual of char_array_to_msg()
+ * 
+ * @param m Message to transform.
+ * @paraa addr Address to store the array.
+ * @return size_t Size of the created array.
+ */
+size_t msg_to_char_array(msg_t *m, char **addr);
+
+/**
+ * @brief Transforms the char array into a message.
+ * 
+ * It's the dual of msg_to_char_array()
+ * 
+ * @param s char array to transform.
+ * @param addr Address to store the message. 
+ * @return size_t Number of TLV.
+ */ 
+size_t char_array_to_msg(char *s, msg_t **addr);
+
+/**
+ * @brief Transforms a TLV into a char array.
+ * 
+ * @param t TLV to transform.
+ * @param addr Addr to store the array.
+ * @param ptr unsigned long that indicates where in the array to start to write.
+ * @param max_ptr Determines the maximum size of the array stored.
+ * @return size_t 
+ */
+size_t tlv_to_char_array(tlv_t *t, char **addr, unsigned long *ptr, size_t max_ptr);
+
+/**
+ * @brief Transforms a char array into a TLV.
+ * 
+ * @param s char array to transform.
+ * @param addr Address to store the TLV.
+ * @param ptr unsigned long that indicates where to staart in the array.
+ * @param max_ptr Maximum of the ptr.
+ * @return size_t 
+ */
+size_t char_array_to_tlv(char* s, tlv_t **addr, unsigned long *ptr, size_t max_ptr);
+
+
+#endif  // MSG_H
+

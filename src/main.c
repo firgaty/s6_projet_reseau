@@ -12,15 +12,13 @@
 #include <stdlib.h>
 
 #include "msg.h"
+#include "test.h"
 
 int main(int argc, char const *argv[])
 {
     srand(time(NULL));
 
-    tlv_t *t = gen_tlv_padn(10);
-    print_tlv(t);
-
-    printf("%d: %c ; %d\n", PADN, (unsigned char)PADN, (int)((unsigned char)PADN));
+    test_msg();
 
     return 0;
 }
