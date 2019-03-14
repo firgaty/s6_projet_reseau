@@ -54,4 +54,4 @@ dkms.conf
 # Documenation folder
 dox
 .vscode
-.ycm_*
+.ycm_extra_conf.py
