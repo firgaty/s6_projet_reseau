@@ -53,3 +53,5 @@ dkms.conf
 
 # Documenation folder
 dox
+.vscode
+.ycm_*
