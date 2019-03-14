@@ -15,6 +15,7 @@ all: $(NAME)
 
 $(NAME): $(SRC)
 	@$(CC) $(CFLAGS) $(LDLIBS) $(SRC) -o $(NAME)
+	doxygen Doxyfile
 
 clean:
 

@@ -25,6 +25,7 @@
 #define MSG_SIZE 4096
 #define MSG_MAGIC 93
 #define MSG_VERSION 2
+#define MSG_TLV_NB_DEF 64
 
 typedef enum { SHORT_HELLO = 0, LONG_HELLO = 1 } HELLO_TYPE;
 
