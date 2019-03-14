@@ -167,6 +167,9 @@ size_t msg_to_char_array(msg_t *m, char **addr) {
   (*addr)[ptr++] = (m->length >> 8) & 0xFF;
   (*addr)[ptr++] = m->length & 0xFF;
   // TODO TLV
+  for (int i = 0; i < m->tlv_nb; i++, ptr++) {
+    tlv_to_char_array(m->body[i], addr, &ptr, m->length - 3);
+  }
   return 0;
 }
 
@@ -180,6 +183,18 @@ size_t char_array_to_msg(char *s, msg_t **addr) {
   (*addr)->length = s[ptr++] << 8;
   (*addr)->length = s[ptr++] + (*addr)->length;
   // TODO TLV
+  tlv_t **temp_ts = malloc(sizeof(tlv_t *));
+  tlv_t **temp_ts2 = malloc(sizeof(tlv_t *) * MSG_TLV_NB_DEF);
+  int nb = 0;
+  for (int i = 0; i < (*addr)->length - 3; i++, ptr++, nb++) {
+    char_array_to_tlv(s, temp_ts, &ptr, (*addr)->length - 3);
+    temp_ts2[nb] = *temp_ts;
+  }
+
+  (*addr)->body = malloc(sizeof(tlv_t *) * nb);
+  for (int i = 0; i < nb; i++) {
+    (*addr)->body[i] = temp_ts2[i];
+  }
   return size;
 }
 
@@ -232,18 +247,25 @@ size_t char_array_to_tlv(char *s, tlv_t **addr, unsigned long *ptr,
     break;
   case PADN:
     memcpy(&((*addr)->body.pad_n), (s + *ptr), (*addr)->length);
+    break;
   case HELLO:
     memcpy(&((*addr)->body.hello), (s + *ptr), (*addr)->length);
+    break;
   case NEIGHBOUR:
     memcpy(&((*addr)->body.neighbour), (s + *ptr), (*addr)->length);
+    break;
   case DATA:
     memcpy(&((*addr)->body.data), (s + *ptr), (*addr)->length);
+    break;
   case ACK:
     memcpy(&((*addr)->body.data), (s + *ptr), (*addr)->length);
+    break;
   case GO_AWAY:
     memcpy(&((*addr)->body.go_away), (s + *ptr), (*addr)->length);
+    break;
   case WARNING:
     memcpy(&((*addr)->body.warning), (s + *ptr), (*addr)->length);
+    break;
   default:
     // TODO : implement error.
     break;

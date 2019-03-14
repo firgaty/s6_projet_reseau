@@ -201,9 +201,9 @@ void print_msg(msg_t *m);
 
 /**
  * @brief Transforms the message into a char array.
- * 
+ *
  * It's the dual of char_array_to_msg()
- * 
+ *
  * @param m Message to transform.
  * @paraa addr Address to store the array.
  * @return size_t Size of the created array.
@@ -212,37 +212,37 @@ size_t msg_to_char_array(msg_t *m, char **addr);
 
 /**
  * @brief Transforms the char array into a message.
- * 
+ *
  * It's the dual of msg_to_char_array()
- * 
+ *
  * @param s char array to transform.
- * @param addr Address to store the message. 
+ * @param addr Address to store the message.
  * @return size_t Number of TLV.
- */ 
+ */
 size_t char_array_to_msg(char *s, msg_t **addr);
 
 /**
  * @brief Transforms a TLV into a char array.
- * 
+ *
  * @param t TLV to transform.
  * @param addr Addr to store the array.
  * @param ptr unsigned long that indicates where in the array to start to write.
  * @param max_ptr Determines the maximum size of the array stored.
- * @return size_t 
+ * @return size_t
  */
-size_t tlv_to_char_array(tlv_t *t, char **addr, unsigned long *ptr, size_t max_ptr);
+size_t tlv_to_char_array(tlv_t *t, char **addr, unsigned long *ptr,
+                         size_t max_ptr);
 
 /**
  * @brief Transforms a char array into a TLV.
- * 
+ *
  * @param s char array to transform.
  * @param addr Address to store the TLV.
  * @param ptr unsigned long that indicates where to staart in the array.
  * @param max_ptr Maximum of the ptr.
- * @return size_t 
+ * @return size_t
  */
-size_t char_array_to_tlv(char* s, tlv_t **addr, unsigned long *ptr, size_t max_ptr);
+size_t char_array_to_tlv(char *s, tlv_t **addr, unsigned long *ptr,
+                         size_t max_ptr);
 
-
-#endif  // MSG_H
-
+#endif // MSG_H
