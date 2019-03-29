@@ -9,13 +9,12 @@ SRC_DIR ?= ./src
 BUILD_DIR ?= ./build
 SRC := $(wildcard $(SRC_DIR)/*.c)
 
-.PHONY: all clean  re
+.PHONY: build clean  re
 
-all: $(NAME)
+build: $(NAME)
 
 $(NAME): $(SRC)
 	@$(CC) $(CFLAGS) $(LDLIBS) $(SRC) -o $(NAME)
-	doxygen Doxyfile
 
 clean:
 
@@ -23,3 +22,6 @@ fclean: clean
 	@rm -f $(NAME)
 
 re: fclean all
+
+doc:
+	doxygen Doxyfile

@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <time.h>
 #include <unistd.h>
 
 #define MSG_SIZE 4096
@@ -56,14 +57,14 @@ typedef struct tlv_t {
       uint64_t dest_id;
     } hello;
     struct neighbour {
-      char *ip;
+      unsigned char* ip;
       uint16_t port;
     } neighbour;
     struct data {
       uint64_t sender_id;
       uint32_t nonce;
       unsigned char type;
-      char *data;
+      char* data;
     } data;
     struct ack {
       uint64_t sender_id;
@@ -71,10 +72,10 @@ typedef struct tlv_t {
     } ack;
     struct go_away {
       char code;
-      char *message;
+      char* message;
     } go_away;
     struct warning {
-      char *message;
+      char* message;
     } warning;
   } body;
 } tlv_t;
@@ -83,7 +84,7 @@ typedef struct msg_t {
   unsigned char magic;
   unsigned char version;
   uint16_t length;
-  tlv_t **body;
+  tlv_t** body;
   size_t tlv_nb;
 } msg_t;
 
@@ -92,7 +93,7 @@ typedef struct msg_t {
  *
  * @return tlv_t* Pad1.
  */
-tlv_t *gen_tlv_pad1();
+tlv_t* gen_tlv_pad1();
 
 /**
  * @brief Generates a TLV to be ignored at reception with a body of n octets set
@@ -101,7 +102,7 @@ tlv_t *gen_tlv_pad1();
  * @param n Number of bytes.
  * @return tlv_t* PadN.
  */
-tlv_t *gen_tlv_padn(unsigned int n);
+tlv_t* gen_tlv_padn(unsigned int n);
 
 /**
  * @brief Generates a Hello TLV.
@@ -116,7 +117,7 @@ tlv_t *gen_tlv_padn(unsigned int n);
  * ignored.
  * @return tlv_t* Hello TLV.
  */
-tlv_t *gen_tlv_hello(HELLO_TYPE type, uint64_t source_id, uint64_t dest_id);
+tlv_t* gen_tlv_hello(HELLO_TYPE type, uint64_t source_id, uint64_t dest_id);
 
 /**
  * @brief Generates a Neighbour TLV
@@ -125,7 +126,7 @@ tlv_t *gen_tlv_hello(HELLO_TYPE type, uint64_t source_id, uint64_t dest_id);
  * @param port Port of the pair.
  * @return tlv_t* Neighbour TLV
  */
-tlv_t *gen_tlv_neighbour(char *ip, uint16_t port);
+tlv_t* gen_tlv_neighbour(unsigned char* ip, uint16_t port);
 
 /**
  * @brief Generates a Data TLV.
@@ -139,8 +140,7 @@ tlv_t *gen_tlv_neighbour(char *ip, uint16_t port);
  * @param data Data/Message to send.
  * @return tlv_t* Data TLV.
  */
-tlv_t *gen_tlv_data(uint64_t sender_id, uint32_t nonce, DATA_TYPE type,
-                    char *data);
+tlv_t* gen_tlv_data(uint64_t sender_id, DATA_TYPE type, char* data);
 
 /**
  * @brief Generates an Ack TLV.
@@ -149,7 +149,7 @@ tlv_t *gen_tlv_data(uint64_t sender_id, uint32_t nonce, DATA_TYPE type,
  * @param nonce Nonce of teh corresponding Data TLV.
  * @return tlv_t* Ack TLV.
  */
-tlv_t *gen_tlv_ack(uint64_t sender_id, uint32_t nonce);
+tlv_t* gen_tlv_ack(uint64_t sender_id, uint32_t nonce);
 
 /**
  * @brief Generates a GoAway TLV.
@@ -165,7 +165,9 @@ tlv_t *gen_tlv_ack(uint64_t sender_id, uint32_t nonce);
  * @param message_len Length of the message.
  * @return tlv_t* GoAway TLV.
  */
-tlv_t *gen_tlv_go_away(char code, short contains_message, char *message,
+tlv_t* gen_tlv_go_away(char code,
+                       short contains_message,
+                       char* message,
                        size_t message_len);
 
 /**
@@ -175,7 +177,7 @@ tlv_t *gen_tlv_go_away(char code, short contains_message, char *message,
  * @param message_len Length of the message;
  * @return tlv_t* Warning TLV.
  */
-tlv_t *gen_tlv_warning(char *message, size_t message_len);
+tlv_t* gen_tlv_warning(char* message, size_t message_len);
 
 /**
  * @brief Generates a message.
@@ -184,21 +186,21 @@ tlv_t *gen_tlv_warning(char *message, size_t message_len);
  * @param ts_size Size of the array.
  * @return msg_t* Message.
  */
-msg_t *gen_msg(tlv_t **ts, size_t ts_size);
+msg_t* gen_msg(tlv_t** ts, size_t ts_size);
 
 /**
  * @brief Prints the TLV displaying all useful informations.
  *
  * @param t TLV to print.
  */
-void print_tlv(tlv_t *t);
+void print_tlv(tlv_t* t);
 
 /**
  * @brief Prints the message displaying allthe useful informations.
  *
  * @param m Message to print.
  */
-void print_msg(msg_t *m);
+void print_msg(msg_t* m);
 
 /**
  * @brief Transforms the message into a char array.
@@ -206,10 +208,10 @@ void print_msg(msg_t *m);
  * It's the dual of char_array_to_msg()
  *
  * @param m Message to transform.
- * @paraa addr Address to store the array.
+ * @param addr Address to store the array.
  * @return size_t Size of the created array.
  */
-size_t msg_to_char_array(msg_t *m, char **addr);
+size_t msg_to_char_array(msg_t* m, char** addr);
 
 /**
  * @brief Transforms the char array into a message.
@@ -220,7 +222,7 @@ size_t msg_to_char_array(msg_t *m, char **addr);
  * @param addr Address to store the message.
  * @return size_t Number of TLV.
  */
-size_t char_array_to_msg(char *s, msg_t **addr);
+size_t char_array_to_msg(char* s, msg_t** addr);
 
 /**
  * @brief Transforms a TLV into a char array.
@@ -231,7 +233,9 @@ size_t char_array_to_msg(char *s, msg_t **addr);
  * @param max_ptr Determines the maximum size of the array stored.
  * @return size_t
  */
-size_t tlv_to_char_array(tlv_t *t, char **addr, unsigned long *ptr,
+size_t tlv_to_char_array(tlv_t* t,
+                         char** addr,
+                         unsigned long* ptr,
                          size_t max_ptr);
 
 /**
@@ -243,7 +247,57 @@ size_t tlv_to_char_array(tlv_t *t, char **addr, unsigned long *ptr,
  * @param max_ptr Maximum of the ptr.
  * @return size_t
  */
-size_t char_array_to_tlv(char *s, tlv_t **addr, unsigned long *ptr,
+size_t char_array_to_tlv(char* s,
+                         tlv_t** addr,
+                         unsigned long* ptr,
                          size_t max_ptr);
 
-#endif // MSG_H
+/**
+ * @brief Adds a TLV to the message body.
+ *
+ * @param m Message.
+ * @param t TLV.
+ * @return short 1 if added else 0.
+ */
+short msg_add_tlv(msg_t* m, tlv_t* t);
+
+/**
+ * @brief Converts a section of a string into a tlv member.
+ *
+ * @param s Data string.
+ * @param ptr Pointer to the start of the member in the string s.
+ * @param member Member to initialize.
+ * @param size Size of the member.
+ * @return size_t
+ */
+size_t char_to_member(char* s, unsigned long* ptr, void* member, size_t size);
+
+/**
+ * @brief Converts a tlv member into a segment of a string.
+ *
+ * @param s Adress of the string to manipulate.
+ * @param ptr Pointer.
+ * @param member Member to transform.
+ * @param size Size of the member.
+ * @return size_t
+ */
+size_t member_to_char(char** s, unsigned long* ptr, void* member, size_t size);
+
+/**
+ * @brief Generates an ACK TLV from the sender ID and Nonce of a data_tlv.
+ *
+ * @param data_tlv DATA TLV.
+ * @param ack_tlv Adress to the new ACK TLV.
+ * @return short*
+ */
+short* ack_from_data(tlv_t* data_tlv, tlv_t** ack_tlv);
+
+/**
+ * @brief Generates a nonce from a user ID, using time.
+ *
+ * @param id
+ * @return uint32_t
+ */
+uint32_t gen_nonce(uint64_t id);
+
+#endif  // MSG_H
