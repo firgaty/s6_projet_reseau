@@ -1,14 +1,20 @@
+/**
+ * @file neighbour.h
+ * @author Félix Desmaretz 
+ * @brief 
+ * @version 0.1
+ * @date 2019-04-02
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
 #ifndef NEIGHBOUR_H
 #define NEIGHBOUR_H
 
-#include <inttypes.h>
-#include <time.h>
+#include "dllist.h"
+#include "types.h"
 
-typedef struct neighbour_t {
-  unsigned char* ip;
-  uint16_t port;
-  time_t last_hello;
-  time_t last_hello_long;
-} neighbour_t;
 
-#endif  // !NEIGHBOUR_H
+
+
+#endif // !NEIGHBOUR_H
