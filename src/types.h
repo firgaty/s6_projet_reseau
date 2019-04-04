@@ -1,3 +1,15 @@
+/**
+ * @file types.h
+ * @author Félix Desmaretz
+ * @brief File to store all custom types, their constructors/generators and free
+ * functions.
+ * @version 0.1
+ * @date 2019-04-02
+ *
+ * @copyright Copyright (c) 2019
+ *
+ */
+
 #ifndef TYPES_H
 #define TYPES_H
 
@@ -169,7 +181,6 @@ tlv_t* gen_tlv_warning(char* message, size_t message_len);
  */
 msg_t* gen_msg(tlv_t** ts, size_t ts_size);
 
-
 /**
  * ####################################
  * NEIGHBOUR
@@ -178,7 +189,7 @@ msg_t* gen_msg(tlv_t** ts, size_t ts_size);
 
 /**
  * @brief Neighbour type.
- * 
+ *
  */
 typedef struct neighbour_t {
   unsigned char* ip;
@@ -187,8 +198,8 @@ typedef struct neighbour_t {
   time_t last_hello_long;
 } neighbour_t;
 
-neighbour_t* gen_neighbour(unsigned char *ip, uint16_t port);
-void free_neighbour(neighbour_t *n);
+neighbour_t* gen_neighbour(unsigned char* ip, uint16_t port);
+void free_neighbour(neighbour_t* n);
 
 /**
  * ####################
@@ -196,7 +207,11 @@ void free_neighbour(neighbour_t *n);
  * ####################
  */
 
-typedef enum { NEIGHBOUR } DLL_NODE_TYPE;
+/**
+ * @brief All the node types for the dllist_t, add a new type here when needed.
+ *
+ */
+typedef enum { DLL_NEIGHBOUR, DLL_INT } DLL_NODE_TYPE;
 
 /**
  * @brief Generic doubly linked list node.
@@ -204,8 +219,8 @@ typedef enum { NEIGHBOUR } DLL_NODE_TYPE;
  */
 typedef struct dllist_node_t {
   DLL_NODE_TYPE type;
-  dllist_node_t* next;
-  dllist_node_t* prev;
+  struct dllist_node_t* next;
+  struct dllist_node_t* prev;
   void* data;
 } dllist_node_t;
 
@@ -222,16 +237,16 @@ typedef struct dllist_t {
 
 /**
  * @brief Generates a new dllist
- * 
+ *
  * @param type type of the data that will be contained.
  * See DLL_NODE_TYPE.
- * @return dllist_t* New list. 
+ * @return dllist_t* New list.
  */
 dllist_t* gen_dllist(DLL_NODE_TYPE type);
 
 /**
  * @brief Generates a new node.
- * 
+ *
  * @param type Type of the data, see DLL_NODE_TYPE.
  * @param data Data to be contained.
  * @return dllist_node_t* new node.
@@ -240,7 +255,7 @@ dllist_node_t* gen_dllist_node(DLL_NODE_TYPE type, void* data);
 
 /**
  * @brief Frees a list.
- * 
+ *
  * @param list List to free.
  * @param erase_data 1 if data must be erased, else 0.
  */
@@ -248,11 +263,10 @@ void dllist_free(dllist_t* list, short erase_data);
 
 /**
  * @brief Frees a node.
- * 
+ *
  * @param node Node to free.
  * @param erase_data 1 if data must be erased, else 0.
  */
-void dllist_free_node(dllist_node_t *node, short erase_data);
+void dllist_free_node(dllist_node_t* node, short erase_data);
 
-#endif // !TYPES_H
-
+#endif  // !TYPES_H

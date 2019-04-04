@@ -142,6 +142,7 @@ void dllist_free_node(dllist_node_t* node, short erase_data) {
   node->prev = NULL;
   if (erase_data) {
     // TODO ajouter les destructeurs nécessaires en fonction du type de donnée.
+    printf("node freed\n");
     free(node->data);
   }
 

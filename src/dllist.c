@@ -35,13 +35,12 @@ short dllist_push_front(dllist_t* list, DLL_NODE_TYPE type, void* data) {
   return 1;
 }
 
-short dllist_pop_back(dllist_t* list, void** addr) {
+void* dllist_pop_back(dllist_t* list) {
   if (dllist_is_empty(list))
     return 0;
 
   dllist_node_t* n = list->last;
-  if (addr != NULL)
-    *addr = list->last->data;
+  void *data = n->data;
 
   if (dllist_last_node(list)) {
     list->first = NULL;
@@ -55,16 +54,15 @@ short dllist_pop_back(dllist_t* list, void** addr) {
 
   list->size--;
 
-  return 1;
+  return data;
 }
 
-short dllist_pop_front(dllist_t* list, void** addr) {
+void* dllist_pop_front(dllist_t* list) {
   if (dllist_is_empty(list))
     return 0;
 
   dllist_node_t* n = list->first;
-  if (addr != NULL)
-    *addr = list->first->data;
+  void *data = n->data;
 
   if (dllist_last_node(list)) {
     list->first = NULL;
@@ -78,7 +76,7 @@ short dllist_pop_front(dllist_t* list, void** addr) {
 
   list->size--;
 
-  return 1;
+  return data;
 }
 
 short dllist_insert(dllist_t* list,
@@ -96,7 +94,7 @@ short dllist_insert(dllist_t* list,
 
     n = gen_dllist_node(type, data);
     node = list->first;
-    for (int i = 0; i <= index; i++, node = node->next) {
+    for (int i = 0; i < index; i++, node = node->next) {
     }
     node->prev->next = n;
     n->prev = node->prev;
@@ -108,50 +106,50 @@ short dllist_insert(dllist_t* list,
 
     n = gen_dllist_node(type, data);
     node = list->last;
-    for (int i = 0; i <= -index; i++, node = node->prev) {
+    for (int i = 0; i < -index; i++, node = node->prev) {
     }
     node->next->prev = n;
     n->next = node->next;
     node->next = n;
     n->prev = node;
   } else {
-    dllist_push_front(list, type, data);
+    return dllist_push_front(list, type, data);
   }
+  list->size++;
 }
 
-short dllist_remove(dllist_t* list, size_t index, void** addr) {
+void* dllist_remove(dllist_t* list, size_t index) {
   if (dllist_is_empty(list))
     return 0;
   if (index > 0 && index >= list->size || index < 0 && -index >= list->size)
     return 0;
 
   if (index + 1 == list->size)
-    return dllist_pop_back(list, addr);
+    return dllist_pop_back(list);
   if (index == 0 || -(index - 1) == list->size)
-    return dllist_pop_front(list, addr);
+    return dllist_pop_front(list);
 
   dllist_node_t* n;
   if (index > 0) {
     n = list->first;
-    for (int i = 0; i <= index; i++, n = n->next) {
+    for (int i = 0; i < index; i++, n = n->next) {
     }
   } else {
     n = list->last;
-    for (int i = 0; i <= -index; i++, n = n->prev) {
+    for (int i = 0; i < -index; i++, n = n->prev) {
     }
   }
 
   n->next->prev = n->prev;
   n->prev->next = n->next;
 
-  if (addr != NULL)
-    *addr = n->data;
+  void *data = n->data;
 
   dllist_free_node(n, FALSE);
 
   list->size--;
 
-  return TRUE;
+  return data;
 }
 
 void* dllist_get(dllist_t* list, size_t index) {
@@ -168,11 +166,11 @@ void* dllist_get(dllist_t* list, size_t index) {
   dllist_node_t* n;
   if (index > 0) {
     n = list->first;
-    for (int i = 0; i <= index; i++, n = n->next) {
+    for (int i = 0; i < index; i++, n = n->next) {
     }
   } else {
     n = list->last;
-    for (int i = 0; i <= -index; i++, n = n->prev) {
+    for (int i = 0; i < -index; i++, n = n->prev) {
     }
   }
 
@@ -185,6 +183,8 @@ short dllist_first_node(dllist_t* list, dllist_node_t* node) {
 
   list->first = node;
   list->last = node;
+
+  list->size++;
   return 1;
 }
 
@@ -193,5 +193,5 @@ short dllist_last_node(dllist_t* list) {
 }
 
 short dllist_is_empty(dllist_t* list) {
-  return list->first != NULL || list->last != NULL;
+  return list->first == NULL || list->last == NULL;
 }

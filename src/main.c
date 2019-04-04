@@ -18,6 +18,7 @@ int main(int argc, char const *argv[]) {
   srand(time(NULL));
 
   test_msg();
+  test_dllist();
 
   return 0;
 }

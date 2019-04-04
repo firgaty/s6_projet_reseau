@@ -20,17 +20,16 @@
 
 short dllist_push_back(dllist_t* list, DLL_NODE_TYPE type, void* data);
 short dllist_push_front(dllist_t* list, DLL_NODE_TYPE type, void* data);
-short dllist_pop_back(dllist_t* list, void** addr);
-short dllist_pop_front(dllist_t* list, void** addr);
+void* dllist_pop_back(dllist_t* list);
+void* dllist_pop_front(dllist_t* list);
 short dllist_insert(dllist_t* list,
                     size_t index,
                     DLL_NODE_TYPE type,
                     void* data);
-short dllist_remove(dllist_t* list, size_t index, void** addr);
+void* dllist_remove(dllist_t* list, size_t index);
 void* dllist_get(dllist_t* list, size_t index);
 short dllist_first_node(dllist_t* list, dllist_node_t* node);
 short dllist_last_node(dllist_t* list);
 short dllist_is_empty(dllist_t *list);
-void dllist_print_list(dllist_t *list);
-void dllist_print_node(dllist_node_t* node);
+
 #endif // !LIST_H
