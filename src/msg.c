@@ -31,8 +31,8 @@ void print_tlv(tlv_t* t) {
         printf("Destination ID: %ld\n", t->body.hello.dest_id);
       break;
     case TLV_NEIGHBOUR:
-      printf("TLV type: Neighbour\nLength: %d\nIP: %s\nPort: %d\n", t->length,
-             t->body.neighbour.ip, t->body.neighbour.port);
+      printf("TLV type: Neighbour\nLength: %d\nIP: %.*s\nPort: %u\n", t->length,
+             16, t->body.neighbour.ip, t->body.neighbour.port);
       break;
     case TLV_DATA:
       printf(
@@ -87,7 +87,7 @@ size_t msg_to_char_array(msg_t* m, char** addr) {
   return 0;
 }
 
-// TODO
+// TODO ! SIZE il faut le calculer !
 size_t char_array_to_msg(char* s, msg_t** addr) {
   size_t size = 0;
   unsigned long ptr = 0;
@@ -113,6 +113,9 @@ size_t char_array_to_msg(char* s, msg_t** addr) {
   for (int i = 0; i < nb; i++) {
     (*addr)->body[i] = temp_ts2[i];
   }
+
+  (*addr)->tlv_nb = nb;
+
   return size;
 }
 

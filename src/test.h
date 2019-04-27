@@ -4,6 +4,7 @@
 #include "types.h"
 #include "msg.h"
 #include "dllist.h"
+#include "neighbour_map.h"
 
 /**
  * @brief Test for msg.h functions.
@@ -12,4 +13,5 @@
  */
 int test_msg();
 int test_dllist();
-#endif  // TEST_H
+int test_neighbour_map();
+#endif // TEST_H

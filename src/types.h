@@ -15,6 +15,10 @@
 
 #include <inttypes.h>
 #include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "map.h"
 
 #define MSG_SIZE 4096
 #define MSG_MAGIC 93
@@ -268,5 +272,47 @@ void dllist_free(dllist_t* list, short erase_data);
  * @param erase_data 1 if data must be erased, else 0.
  */
 void dllist_free_node(dllist_node_t* node, short erase_data);
+
+/**
+ * ####################
+ * DLLIST
+ * ####################
+ */
+
+/**
+ * @brief neighbour entry for the neighbour_map_t.
+ *
+ */
+typedef struct neighbour_entry_t {
+  char* ip;
+  uint16_t port;
+  time_t last_short_hello;
+  time_t last_long_hello;
+} neighbour_entry_t;
+
+typedef map_t(neighbour_entry_t*) neighbour_map_t;
+
+/**
+ * @brief Generates a neighbour_entry_t with set ip and port and last and long hello at 0.
+ * 
+ * @param ip IP
+ * @param port Port
+ * @return neighbour_entry_t* Generated entry. 
+ */
+neighbour_entry_t* gen_neighbour_entry(char* ip, uint16_t port);
+
+/**
+ * @brief Frees all allocated ressources to a neighbour entry.
+ * 
+ * @param e Entry to free.
+ */
+void free_neighbour_entry(neighbour_entry_t *e);
+
+/**
+ * @brief Generates an empty neighbour_map_t.
+ * 
+ * @return neighbour_map_t* Map generated.
+ */
+neighbour_map_t* gen_neighbour_map();
 
 #endif  // !TYPES_H

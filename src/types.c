@@ -1,6 +1,5 @@
 #include "types.h"
 
-
 tlv_t* gen_tlv_pad1() {
   tlv_t* out = malloc(sizeof(tlv_t));
   out->type = (unsigned char)TLV_PAD1;
@@ -96,15 +95,15 @@ msg_t* gen_msg(tlv_t** ts, size_t ts_size) {
 /**
  * ####################
  * NEIGHBOUR
- * #################### 
+ * ####################
  */
 
 /**
  * @brief Generates a new Neighbour.
- * 
- * @param char 
- * @param port 
- * @return neighbour_t* 
+ *
+ * @param char
+ * @param port
+ * @return neighbour_t*
  */
 neighbour_t* gen_neighbour(unsigned char* ip, uint16_t port) {
   neighbour_t* n = malloc(sizeof(neighbour_t));
@@ -122,10 +121,8 @@ void free_neighbour(neighbour_t* n) {
 /**
  * ####################
  * DLLIST
- * #################### 
+ * ####################
  */
-
-
 
 void dllist_free(dllist_t* list, short erase_data) {
   if (dllist_is_empty(list))
@@ -163,4 +160,32 @@ dllist_node_t* gen_dllist_node(DLL_NODE_TYPE type, void* data) {
   node->data = data;
   node->type = type;
   return node;
+}
+
+/**
+ * ####################
+ * DLLIST
+ * ####################
+ */
+
+neighbour_entry_t* gen_neighbour_entry(char* ip, uint16_t port) {
+  neighbour_entry_t* e = malloc(sizeof(neighbour_entry_t));
+  e->ip = malloc(sizeof(char) * 16);
+  memcpy(e->ip, ip, 16);
+  printf("%.*s\n", 16, e->ip);
+  e->port = port;
+  e->last_short_hello = 0;
+  e->last_long_hello = 0;
+  return e;
+}
+
+void free_neighbour_entry(neighbour_entry_t *e) {
+  free(e->ip);
+  free(e);
+}
+
+neighbour_map_t* gen_neighbour_map() {
+  neighbour_map_t *m = malloc(sizeof(neighbour_map_t));
+  map_init(m);
+  return m;
 }

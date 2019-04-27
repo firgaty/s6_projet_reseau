@@ -27,6 +27,7 @@ int test_msg() {
 
   char_array_to_msg(*addr, m_addr);
 
+  // bug ici...
   print_msg(*m_addr);
 
   unsigned long ptr = 0;
@@ -71,6 +72,26 @@ int test_dllist() {
   printf("\n%d\n", *(int *)dllist_get(l, 2));
 
   printf("\n%d\n", *(int *)dllist_pop_back(l));
+
+  return 1;
+}
+
+int test_neighbour_map() {
+  neighbour_map_t *m = gen_neighbour_map();
+
+  neighbour_entry_t *e1 = gen_neighbour_entry("ffffffffffffffff", 100);
+  neighbour_entry_t *e2 = gen_neighbour_entry("ffffffffffffeeee", 100);
+  neighbour_entry_t *e3 = gen_neighbour_entry("ffffffffeeeeeeee", 100);
+  neighbour_entry_t *e4 = gen_neighbour_entry("ffffeeeeeeeeeeee", 100);
+  neighbour_entry_t *e5 = gen_neighbour_entry("eeeeeeeeeeeeeeee", 100);
+
+  map_add_neighbour_entry(m, e1);
+  map_add_neighbour_entry(m, e2);
+  map_add_neighbour_entry(m, e3);
+  map_add_neighbour_entry(m, e4);
+  map_add_neighbour_entry(m, e5);
+
+  print_neighbour_map(m);
 
   return 1;
 }
