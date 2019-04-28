@@ -108,10 +108,10 @@ size_t char_array_to_msg(char* s, msg_t** addr) {
   tlv_t** temp_ts2 = malloc(sizeof(tlv_t*) * MSG_TLV_NB_DEF);
   int nb = 0;
   // to remove.
-  printf("length : %d\n", (*addr)->length);
+  printf("Length : %d\n", (*addr)->length);
   for (; ptr < (*addr)->length - 3; nb++) {
     printf("ptr: %ld\n", ptr);
-    char_array_to_tlv(s, temp_ts, &ptr, (*addr)->length + 4);
+    char_array_to_tlv(s, temp_ts, &ptr, (size_t)(*addr)->length + 4);
     temp_ts2[nb] = *temp_ts;
     print_tlv(*temp_ts);
   }
@@ -121,6 +121,7 @@ size_t char_array_to_msg(char* s, msg_t** addr) {
     (*addr)->body[i] = temp_ts2[i];
   }
 
+  // (*addr)->body = temp_ts2;
   (*addr)->tlv_nb = nb;
 
   return size;
@@ -194,10 +195,6 @@ size_t char_array_to_tlv(char* s,
     case TLV_PAD1:
       break;
     case TLV_PADN:
-      if(*ptr + (*addr)->length > max_ptr) {
-        perror("Max pointer reached\n");
-        return 0;
-      }
       (*addr)->body.pad_n.zeroes = (unsigned int)(*addr)->length;
       *ptr += (unsigned long)(*addr)->body.pad_n.zeroes;
       break;

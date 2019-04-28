@@ -31,15 +31,15 @@ int test_msg() {
   print_msg(*m_addr);
 
 
-  // Bug a lieu juste avant la suite.
-  unsigned long ptr = 0;
-  tlv_to_char_array(t, addr, &ptr, 0);
-  printf("ptr: %ld\n", ptr);
-  ptr = 0;
+  // // Bug a lieu juste avant la suite.
+  // unsigned long ptr = 0;
+  // tlv_to_char_array(t, addr, &ptr, 0);
+  // printf("ptr: %ld\n", ptr);
+  // ptr = 0;
 
-  char_array_to_tlv(*addr, ts, &ptr, 0);
-  print_tlv(*ts);
-  return 0;
+  // char_array_to_tlv(*addr, ts, &ptr, 0);
+  // print_tlv(*ts);
+  // return 0;
 }
 
 int test_dllist() {

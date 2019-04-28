@@ -81,8 +81,8 @@ typedef struct msg_t {
   unsigned char magic;
   unsigned char version;
   uint16_t length;
-  tlv_t** body;
   size_t tlv_nb;
+  tlv_t** body;
 } msg_t;
 
 /**
