@@ -34,11 +34,12 @@ La documentation de la map est dans `./doc/map`.
 
 `neighbour.h` et `neighbour.c` implémentent les différentes listes de voisins et leur manipulations.
 
-# Todo
+# Fonctionnement
 
-- [ ] implémenter le protocole UDP
-- [ ] envoit de message
-- [ ] reception de message 
-- [ ] gérér les listes de voisins
-- [ ] interface
-- [ ] des bonus
+## Cycle des voisins
+
+![](doc/projet/img/voisins_dia.png)
+
+## Reception TLV Data
+
+![](doc/projet/img/reception_data_dia.png)
