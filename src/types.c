@@ -92,6 +92,13 @@ msg_t* gen_msg(tlv_t** ts, size_t ts_size) {
   return m;
 }
 
+uint32_t gen_nonce(uint64_t id) {
+  time_t s;
+  time(&s);
+
+  return (s ^ 2) / ((uint32_t)id);
+}
+
 /**
  * ####################
  * NEIGHBOUR
@@ -160,6 +167,10 @@ dllist_node_t* gen_dllist_node(DLL_NODE_TYPE type, void* data) {
   node->data = data;
   node->type = type;
   return node;
+}
+
+short dllist_is_empty(dllist_t* list) {
+  return list->first == NULL || list->last == NULL;
 }
 
 /**

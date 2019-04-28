@@ -65,13 +65,9 @@ short map_transfer_neighbour(neighbour_map_t* in,
 }
 
 char* gen_neighbour_key(char* ip, uint16_t port) {
-  // char* key = malloc(sizeof(char) * (16 + sizeof(port)));
-  // memcpy(key, ip, 16);
-  // memcpy(key + 16, port, sizeof(port));
-  // return key;  // Il faut free à chaque usage.
   char* key = malloc(sizeof(char) * 18);
   snprintf(key, 18, "%.*s%u", 16, ip, port);
-  return key;
+  return key; // Il faut free à chaque usage.
 }
 
 void print_neighbour_entry(neighbour_entry_t* e) {
@@ -88,7 +84,6 @@ void print_neighbour_map(neighbour_map_t* m) {
   map_iter_t iter = map_iter(m);
 
   while ((key = map_next(m, &iter))) {
-    printf("%s:\n", key);
     neighbour_entry_t** e = map_get(m, key);
     if ((*e))
       print_neighbour_entry(*e);

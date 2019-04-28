@@ -186,6 +186,14 @@ tlv_t* gen_tlv_warning(char* message, size_t message_len);
 msg_t* gen_msg(tlv_t** ts, size_t ts_size);
 
 /**
+ * @brief Generates a nonce from a user ID, using time.
+ *
+ * @param id
+ * @return uint32_t
+ */
+uint32_t gen_nonce(uint64_t id);
+
+/**
  * ####################################
  * NEIGHBOUR
  * ####################################
@@ -272,6 +280,15 @@ void dllist_free(dllist_t* list, short erase_data);
  * @param erase_data 1 if data must be erased, else 0.
  */
 void dllist_free_node(dllist_node_t* node, short erase_data);
+
+/**
+ * @brief Checks if list is empty.
+ * 
+ * @param list List.
+ * @return short 1 if empty else 0.
+ */
+short dllist_is_empty(dllist_t *list);
+
 
 /**
  * ####################

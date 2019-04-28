@@ -1,3 +1,11 @@
+# Usage
+
+- `$ make` génère le fichier executable `client`.
+- `$ ./manual` ouvre un nouvel onglet du navigateur par défaut sur la racine de la documentation doxygen.
+- `$ doxygen Doxyfile` génère cette même documentation.
+
+La documentation de la map est dans `./doc/map`.
+
 # Contenu des fichiers
 
 ## types
@@ -25,3 +33,12 @@
 ## neighbour
 
 `neighbour.h` et `neighbour.c` implémentent les différentes listes de voisins et leur manipulations.
+
+# Todo
+
+- [ ] implémenter le protocole UDP
+- [ ] envoit de message
+- [ ] reception de message 
+- [ ] gérér les listes de voisins
+- [ ] interface
+- [ ] des bonus

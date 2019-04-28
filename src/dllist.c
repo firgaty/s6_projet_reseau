@@ -116,12 +116,13 @@ short dllist_insert(dllist_t* list,
     return dllist_push_front(list, type, data);
   }
   list->size++;
+  return (short)1;
 }
 
 void* dllist_remove(dllist_t* list, size_t index) {
   if (dllist_is_empty(list))
     return 0;
-  if (index > 0 && index >= list->size || index < 0 && -index >= list->size)
+  if ((index > 0 && index >= list->size) || (index < 0 && -index >= list->size))
     return 0;
 
   if (index + 1 == list->size)
@@ -155,7 +156,7 @@ void* dllist_remove(dllist_t* list, size_t index) {
 void* dllist_get(dllist_t* list, size_t index) {
   if (dllist_is_empty(list))
     return NULL;
-  if (index > 0 && index >= list->size || index < 0 && -index >= list->size)
+  if ((index > 0 && index >= list->size) || (index < 0 && -index >= list->size))
     return NULL;
 
   if (index + 1 == list->size)
@@ -190,8 +191,4 @@ short dllist_first_node(dllist_t* list, dllist_node_t* node) {
 
 short dllist_last_node(dllist_t* list) {
   return list->first == list->last;
-}
-
-short dllist_is_empty(dllist_t* list) {
-  return list->first == NULL || list->last == NULL;
 }

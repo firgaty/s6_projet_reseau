@@ -12,8 +12,8 @@ int test_msg() {
   ts[1] = gen_tlv_hello(LONG_HELLO, 1234567890, 982123);
   msg_t* m = gen_msg(ts, 2);
 
-  printf("Size of: %d\n", sizeof(struct pad_n));
-  printf("Size of: %d\n", sizeof(struct hello));
+  // printf("Size of: %d\n", sizeof(struct pad_n));
+  // printf("Size of: %d\n", sizeof(struct hello));
 
   print_msg(m);
 
@@ -30,9 +30,11 @@ int test_msg() {
   // bug ici...
   print_msg(*m_addr);
 
+
+  // Bug a lieu juste avant la suite.
   unsigned long ptr = 0;
   tlv_to_char_array(t, addr, &ptr, 0);
-  printf("%ld\n", ptr);
+  printf("ptr: %ld\n", ptr);
   ptr = 0;
 
   char_array_to_tlv(*addr, ts, &ptr, 0);
