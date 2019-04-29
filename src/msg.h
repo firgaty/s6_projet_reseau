@@ -126,16 +126,8 @@ size_t member_to_char(char** s, unsigned long* ptr, void* member, size_t size);
  *
  * @param data_tlv DATA TLV.
  * @param ack_tlv Adress to the new ACK TLV.
- * @return short*
+ * @return short
  */
-short* ack_from_data(tlv_t* data_tlv, tlv_t** ack_tlv);
-
-/**
- * @brief Generates a nonce from a user ID, using time.
- *
- * @param id
- * @return uint32_t
- */
-uint32_t gen_nonce(uint64_t id);
+short ack_from_data(tlv_t* data_tlv, tlv_t** ack_tlv);
 
 #endif  // MSG_H

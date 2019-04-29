@@ -30,6 +30,5 @@ void* dllist_remove(dllist_t* list, size_t index);
 void* dllist_get(dllist_t* list, size_t index);
 short dllist_first_node(dllist_t* list, dllist_node_t* node);
 short dllist_last_node(dllist_t* list);
-short dllist_is_empty(dllist_t *list);
 
 #endif // !LIST_H

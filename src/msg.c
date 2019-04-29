@@ -14,6 +14,10 @@
 
 #include "msg.h"
 
+// les printf séparés sont fait exprès,
+// ça permet de savoir exactement quels
+// membres des structures ont des erreurs
+// de lecture et/ou d'écriture sous valgrind.
 void print_tlv(tlv_t* t) {
   printf("---\n");
   switch ((int)t->type) {
@@ -21,12 +25,15 @@ void print_tlv(tlv_t* t) {
       printf("TLV type: Pad1\n");
       break;
     case TLV_PADN:
-      printf("TLV type: PadN\nLength: %d\nN: %d\n", t->length,
-             t->body.pad_n.zeroes);
+      printf("TLV type: PadN\n");
+      printf("Length: %d\n", t->length);
+      printf("N: %d\n", t->body.pad_n.zeroes);
       break;
     case TLV_HELLO:
-      printf("TLV type: Hello\nLength: %d\nHello type: %d\nSource ID: %ld\n",
-             t->length, (int)t->body.hello.type, t->body.hello.source_id);
+      printf("TLV type: Hello\n");
+      printf("Length: %d\n", t->length);
+      printf("Hello type: %d\n", (int)t->body.hello.type);
+      printf("Source ID: %ld\n", t->body.hello.source_id);
       if (t->body.hello.type == LONG_HELLO)
         printf("Destination ID: %ld\n", t->body.hello.dest_id);
       break;
@@ -82,7 +89,7 @@ size_t msg_to_char_array(msg_t* m, char** addr) {
     // m->length + 4 est dû au fait que le contenu du message commence au 5e
     // octet.
     tlv_to_char_array(m->body[i], addr, &ptr, m->length + 4);
-    printf("added ! %d\n", ptr);
+    printf("added ! %ld\n", ptr);
   }
   return 0;
 }
@@ -101,10 +108,10 @@ size_t char_array_to_msg(char* s, msg_t** addr) {
   tlv_t** temp_ts2 = malloc(sizeof(tlv_t*) * MSG_TLV_NB_DEF);
   int nb = 0;
   // to remove.
-  printf("length : %d\n", (*addr)->length);
+  printf("Length : %d\n", (*addr)->length);
   for (; ptr < (*addr)->length - 3; nb++) {
-    printf("ptr: %d\n", ptr);
-    char_array_to_tlv(s, temp_ts, &ptr, (*addr)->length + 4);
+    printf("ptr: %ld\n", ptr);
+    char_array_to_tlv(s, temp_ts, &ptr, (size_t)(*addr)->length + 4);
     temp_ts2[nb] = *temp_ts;
     print_tlv(*temp_ts);
   }
@@ -114,6 +121,7 @@ size_t char_array_to_msg(char* s, msg_t** addr) {
     (*addr)->body[i] = temp_ts2[i];
   }
 
+  // (*addr)->body = temp_ts2;
   (*addr)->tlv_nb = nb;
 
   return size;
@@ -187,8 +195,8 @@ size_t char_array_to_tlv(char* s,
     case TLV_PAD1:
       break;
     case TLV_PADN:
-      (*addr)->body.pad_n.zeroes = (*addr)->length;
-      *ptr += (*addr)->body.pad_n.zeroes;
+      (*addr)->body.pad_n.zeroes = (unsigned int)(*addr)->length;
+      *ptr += (unsigned long)(*addr)->body.pad_n.zeroes;
       break;
     case TLV_HELLO:
       (*addr)->body.hello.type = (*addr)->length / sizeof(uint64_t) == 2;
@@ -234,17 +242,10 @@ size_t char_to_member(char* s, unsigned long* ptr, void* member, size_t size) {
   return size;
 }
 
-short* ack_from_data(tlv_t* data_tlv, tlv_t** ack_tlv) {
+short ack_from_data(tlv_t* data_tlv, tlv_t** ack_tlv) {
   if (data_tlv->type != TLV_DATA)
     return 0;
   *ack_tlv =
       gen_tlv_ack(data_tlv->body.data.sender_id, data_tlv->body.data.nonce);
-  return 1;
-}
-
-uint32_t gen_nonce(uint64_t id) {
-  time_t s;
-  time(&s);
-
-  return (s ^ 2) / ((uint32_t)id);
+  return (short)1;
 }
