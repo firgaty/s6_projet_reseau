@@ -27,14 +27,14 @@
 
 
 /**
- * @brief Prints the TLV displaying all useful informations.
+ * @brief Prints the TLV displaying all the useful informations.
  *
  * @param t TLV to print.
  */
 void print_tlv(tlv_t* t);
 
 /**
- * @brief Prints the message displaying allthe useful informations.
+ * @brief Prints the message displaying all the useful informations.
  *
  * @param m Message to print.
  */
@@ -67,7 +67,7 @@ size_t char_array_to_msg(char* s, msg_t** addr);
  *
  * @param t TLV to transform.
  * @param addr Addr to store the array.
- * @param ptr unsigned long that indicates where in the array to start to write.
+ * @param ptr unsigned long that indicates where in the array we start to write.
  * @param max_ptr Determines the maximum size of the array stored.
  * @return size_t
  */
@@ -81,7 +81,7 @@ size_t tlv_to_char_array(tlv_t* t,
  *
  * @param s char array to transform.
  * @param addr Address to store the TLV.
- * @param ptr unsigned long that indicates where to staart in the array.
+ * @param ptr unsigned long that indicates where to start in the array.
  * @param max_ptr Maximum of the ptr.
  * @return size_t
  */
