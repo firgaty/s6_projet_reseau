@@ -4,7 +4,7 @@ short dllist_push_back(dllist_t* list, DLL_NODE_TYPE type, void* data) {
   if (list == NULL || data == NULL || type != list->type)
     return 0;
 
-  dllist_node_t* node = gen_dllist_node(type, data);
+  dllist_node_t* node = new_dllist_node(type, data);
 
   if (dllist_first_node(list, node))
     return 1;
@@ -21,7 +21,7 @@ short dllist_push_front(dllist_t* list, DLL_NODE_TYPE type, void* data) {
   if (list == NULL || data == NULL || type != list->type)
     return 0;
 
-  dllist_node_t* node = gen_dllist_node(type, data);
+  dllist_node_t* node = new_dllist_node(type, data);
 
   if (dllist_first_node(list, node))
     return 1;
@@ -92,7 +92,7 @@ short dllist_insert(dllist_t* list,
     if (index >= list->size)
       return dllist_push_back(list, type, data);
 
-    n = gen_dllist_node(type, data);
+    n = new_dllist_node(type, data);
     node = list->first;
     for (int i = 0; i < index; i++, node = node->next) {
     }
@@ -104,7 +104,7 @@ short dllist_insert(dllist_t* list,
     if (-index >= list->size)
       return dllist_push_front(list, type, data);
 
-    n = gen_dllist_node(type, data);
+    n = new_dllist_node(type, data);
     node = list->last;
     for (int i = 0; i < -index; i++, node = node->prev) {
     }

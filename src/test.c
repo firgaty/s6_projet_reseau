@@ -1,51 +1,56 @@
 #include "test.h"
 
 int test_msg() {
-  tlv_t* t = gen_tlv_padn(10);
+  tlv_t* t = new_tlv_padn(10);
   print_tlv(t);
 
-  printf("%d: %c ; %d\n", TLV_PADN, (unsigned char)TLV_PADN,
-         (int)((unsigned char)TLV_PADN));
+  // printf("%d: %c ; %d\n", TLV_PADN, (unsigned char)TLV_PADN,
+  //        (int)((unsigned char)TLV_PADN));
 
   tlv_t** ts = malloc(sizeof(tlv_t*) * 2);
   ts[0] = t;
-  ts[1] = gen_tlv_hello(LONG_HELLO, 1234567890, 982123);
-  msg_t* m = gen_msg(ts, 2);
+  ts[1] = new_tlv_hello(true, 1234567890, 982123);
+  msg_t* m = new_msg(ts, 2);
 
-  // printf("Size of: %d\n", sizeof(struct pad_n));
-  // printf("Size of: %d\n", sizeof(struct hello));
+  // // printf("Size of: %d\n", sizeof(struct pad_n));
+  // // printf("Size of: %d\n", sizeof(struct hello));
 
   print_msg(m);
 
-  char** addr = malloc(sizeof(char*));
+  // char** addr = malloc(sizeof(char*));
+  sbuff_t* sb = new_sbuff();
 
   printf("Conversion to char[]...\n");
-  msg_to_char_array(m, addr);
+  // msg_to_char_array(m, addr);
+  serial_msg(m, sb);
+  sbuff_t* db = new_dsbuff(sb->data, sb->next);
 
   printf("Conversion to msg_t...\n");
-  msg_t** m_addr = malloc(sizeof(msg_t*));
+  // sbuff_reserve_space(db, sb->size);
+  // printf("%.*s\n", db->size, db->data);
+  // printf("Size: %ld | Next: %ld\n", db->size, db->next);
+  // sb->next = 0;
 
-  char_array_to_msg(*addr, m_addr);
+  msg_t* m2 = dserial_msg(db);
+  // printf("Size: %ld | Next: %ld\n", db->size, db->next);
 
-  // bug ici...
-  print_msg(*m_addr);
+  // msg_t** m_addr = malloc(sizeof(msg_t*));
 
+  // char_array_to_msg(*addr, m_addr);
 
-  // // Bug a lieu juste avant la suite.
-  // unsigned long ptr = 0;
-  // tlv_to_char_array(t, addr, &ptr, 0);
-  // printf("ptr: %ld\n", ptr);
-  // ptr = 0;
+  // // bug ici...
+  print_msg(m2);
 
-  // char_array_to_tlv(*addr, ts, &ptr, 0);
-  // print_tlv(*ts);
-  // return 0;
+  free_msg(m);
+  free_msg(m2);
+  free_sbuff(sb);
+  free(db);
 }
 
 int test_dllist() {
   printf("###DLLIST TEST###\n");
 
-  dllist_t* l = gen_dllist(DLL_INT);
+  dllist_t* l = new_dllist(DLL_INT);
 
   int a[5] = {1, 2, 3, 4, 5};
 
@@ -71,21 +76,21 @@ int test_dllist() {
     printf("%d | ", *((int*)n->data));
   }
 
-  printf("\n%d\n", *(int *)dllist_get(l, 2));
+  printf("\n%d\n", *(int*)dllist_get(l, 2));
 
-  printf("\n%d\n", *(int *)dllist_pop_back(l));
+  printf("\n%d\n", *(int*)dllist_pop_back(l));
 
   return 1;
 }
 
 int test_neighbour_map() {
-  neighbour_map_t *m = gen_neighbour_map();
+  neighbour_map_t* m = new_neighbour_map();
 
-  neighbour_entry_t *e1 = gen_neighbour_entry("ffffffffffffffff", 100);
-  neighbour_entry_t *e2 = gen_neighbour_entry("ffffffffffffeeee", 100);
-  neighbour_entry_t *e3 = gen_neighbour_entry("ffffffffeeeeeeee", 100);
-  neighbour_entry_t *e4 = gen_neighbour_entry("ffffeeeeeeeeeeee", 100);
-  neighbour_entry_t *e5 = gen_neighbour_entry("eeeeeeeeeeeeeeee", 100);
+  neighbour_entry_t* e1 = new_neighbour_entry("ffffffffffffffff", 100);
+  neighbour_entry_t* e2 = new_neighbour_entry("ffffffffffffeeee", 100);
+  neighbour_entry_t* e3 = new_neighbour_entry("ffffffffeeeeeeee", 100);
+  neighbour_entry_t* e4 = new_neighbour_entry("ffffeeeeeeeeeeee", 100);
+  neighbour_entry_t* e5 = new_neighbour_entry("eeeeeeeeeeeeeeee", 100);
 
   map_add_neighbour_entry(m, e1);
   map_add_neighbour_entry(m, e2);

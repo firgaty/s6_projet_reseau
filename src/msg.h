@@ -25,7 +25,6 @@
 
 #include "types.h"
 
-
 /**
  * @brief Prints the TLV displaying all the useful informations.
  *
@@ -129,5 +128,13 @@ size_t member_to_char(char** s, unsigned long* ptr, void* member, size_t size);
  * @return short
  */
 short ack_from_data(tlv_t* data_tlv, tlv_t** ack_tlv);
+
+void print_padn(padn_body_t* b);
+void print_hello(hello_body_t* b);
+void print_neighbour(neighbour_body_t* b);
+void print_data(data_body_t* b);
+void print_ack(ack_body_t* b);
+void print_go_away(go_away_body_t* b);
+void print_warning(warning_body_t* b);
 
 #endif  // MSG_H

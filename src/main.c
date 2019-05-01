@@ -17,9 +17,9 @@
 int main(int argc, char const *argv[]) {
   srand(time(NULL));
 
-  // test_msg();
-  test_dllist();
-  test_neighbour_map();
+  test_msg();
+  // test_dllist();
+  // test_neighbour_map();
 
   return 0;
 }
