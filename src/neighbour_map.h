@@ -83,7 +83,7 @@ short map_transfer_neighbour(neighbour_map_t* in,
  * @param port Port.
  * @return char* Key
  */
-char *gen_neighbour_key(char *ip, uint16_t port);
+char *new_neighbour_key(char *ip, uint16_t port);
 
 void print_neighbour_entry(neighbour_entry_t *e);
 void print_neighbour_map(neighbour_map_t *m);

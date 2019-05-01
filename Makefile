@@ -1,9 +1,9 @@
 NAME ?= client
 
 CC ?= gcc
-CFLAGS ?= -Wall -g 
+CFLAGS ?= -Wall -g
 # CFLAGS ?= -Wall -Werror -Wextra
-LDLIBS ?= -lreadline
+LDLIBS ?= -lreadline -lnsl
 
 SRC_DIR ?= ./src
 BUILD_DIR ?= ./build
