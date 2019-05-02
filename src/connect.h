@@ -15,7 +15,14 @@
 
 #include "types.h"
 
+#define ID_BITS_LEN 64
 #define REQ_LEN 4096
+
+unsigned char *random_bits(size_t len);
+unsigned char *random_id();
+
+// Ça deviendra sans doute udp_server..
+void *start_server();
 
 
 void* udp_server();

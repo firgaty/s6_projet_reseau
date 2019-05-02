@@ -13,13 +13,18 @@
 
 #include "msg.h"
 #include "test.h"
+#include "connect.h"
 
 int main(int argc, char const *argv[]) {
-  srand(time(NULL));
 
-  test_msg();
+	// Initialisation du générateur de nombres aléatoires.
+  srand((unsigned)time(NULL));
+
+  printf("%s", random_stream(8));
+
+  // test_msg();
   // test_dllist();
   // test_neighbour_map();
 
-  return 0;
+  return (0);
 }
