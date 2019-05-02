@@ -3,7 +3,7 @@ NAME ?= client
 CC ?= gcc
 CFLAGS ?= -Wall -g
 # CFLAGS ?= -Wall -Werror -Wextra
-LDLIBS ?= -lreadline -lnsl
+LDLIBS ?= -lreadline -lnsl -lpthread
 
 SRC_DIR ?= ./src
 BUILD_DIR ?= ./build
