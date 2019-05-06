@@ -33,8 +33,3 @@ int srv_init() {
 		rc = sendto(s, reply, sizeof(reply), 0, (const struct sockaddr *)&client, client_len);
 	}
 }
-
-int main(void) {
-	srv_init();
-	return 0;
-}

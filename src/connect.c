@@ -15,6 +15,47 @@ unsigned char *random_id() {
 	return (random_bits(ID_BITS_LEN));
 }
 
+char *host2ip(const char *hostname) {
+	int rc;
+	struct addrinfo hints;
+	struct addrinfo *res, *p;
+	int s;
+	char *ip;
+
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_INET6;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_protocol = 0;
+	hints.ai_flags |= AI_V4MAPPED | AI_ALL;
+
+	rc = getaddrinfo(hostname, NULL, &hints, &res);
+	DEBUG_MSG("host2ip: après getaddrinfo")
+	if (rc < 0) {
+		fprintf(stderr, "[!] getaddrinfo: %s\n", gai_strerror(rc));
+		exit(1);
+	}
+	for(p = res ; p != NULL ; p = p->ai_next) {
+		s = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+		if (s < 0) {
+			close(s);
+			continue;
+		}
+		if (rc >= 0) {
+			break;
+		}
+		close(s);
+	}
+	DEBUG_MSG("host2ip: après la boucle for")
+	if (p == NULL) {
+		fprintf(stderr, "could not reach hostname %s\n", hostname);
+		exit(1);
+	}
+	ip = calloc(INET6_ADDRSTRLEN + 1, sizeof(char));
+	inet_ntop(p->ai_family, &((struct sockaddr_in6 *)p->ai_addr)->sin6_addr, (void *)ip, INET6_ADDRSTRLEN);
+	freeaddrinfo(res);
+	return (ip);
+}
+
 void *start_server(int loglevel) {
 	unsigned char *id;
 

@@ -16,11 +16,9 @@
 #include "connect.h"
 
 int main(int argc, char const *argv[]) {
-
-	// Initialisation du générateur de nombres aléatoires.
   srand((unsigned)time(NULL));
-
-  start_server(1);
+  printf("reached %s\n", host2ip("louis.ga"));
+  // start_server(1);
   // test_msg();
   // test_dllist();
   // test_neighbour_map();

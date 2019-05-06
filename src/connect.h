@@ -21,8 +21,13 @@
 #define REQ_LEN 4096
 #define DEFAULT_PORT 8090
 
+#define DEBUG 0
+#define DEBUG_MSG(str) if (DEBUG) { printf("[d] %s\n", str); }
+
 unsigned char *random_bits(size_t len);
 unsigned char *random_id();
+
+char *host2ip(const char *hostname);
 
 // Ça deviendra sans doute udp_server..
 void *start_server(int loglevel);
