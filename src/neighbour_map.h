@@ -12,8 +12,11 @@
 #ifndef NEIGHBOUR_MAP_H_
 #define NEIGHBOUR_MAP_H_
 
+#include <pthread.h>
+
 #include "map.h"
 #include "types.h"
+#include "shared_resources.h"
 
 /**
  * @brief Adds a new neighbour form ip and port.
@@ -26,7 +29,6 @@
  * @return short 1 if added else 0.
  */
 short map_add_new_neighbour(neighbour_map_t* map, char* ip, uint16_t port);
-
 
 /**
  * @brief Adds a neighbour entry.
@@ -78,14 +80,17 @@ short map_transfer_neighbour(neighbour_map_t* in,
 
 /**
  * @brief Generated the key for a given neighbour.
- * 
+ *
  * @param ip IP.
  * @param port Port.
  * @return char* Key
  */
-char *new_neighbour_key(char *ip, uint16_t port);
+char* new_neighbour_key(char* ip, uint16_t port);
 
-void print_neighbour_entry(neighbour_entry_t *e);
-void print_neighbour_map(neighbour_map_t *m);
+void print_neighbour_entry(neighbour_entry_t* e);
+void print_neighbour_map(neighbour_map_t* m);
+
+void map_send_hello(neighbour_map_t* m, time_t delay);
+void map_update_hello(char *ip, uint16_t port);
 
 #endif  // NEIGHBOUR_MAP_H_

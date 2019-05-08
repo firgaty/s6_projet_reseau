@@ -162,9 +162,12 @@ uint64_t dserial_long(sbuff_t* b) {
 }
 
 char* dserial_str(size_t str_len, sbuff_t* b) {
+  printf("LENGTH: %ld\n", str_len);
   char* s = malloc(sizeof(char) * str_len);
-  memcpy(&s, ((char*)b->data) + b->next, sizeof(char) * str_len);
-  b->next += sizeof(char) * str_len;
+  for (int i = 0; i < str_len; i ++) {
+    s[i] = dserial_char(b);
+  }
+  // b->next += sizeof(char) * str_len;
   return s;
 }
 
@@ -175,8 +178,6 @@ msg_t* dserial_msg(sbuff_t* b) {
   m->length = dserial_short(b);
 
   m->body = malloc(sizeof(tlv_t*) * MSG_TLV_NB_DEF);
-
-  printf("%ld | %ld\n", b->next, b->real_size);
 
   size_t count = 0;
   for (int i = 0; b->next < b->real_size; i++, count++)
@@ -192,29 +193,38 @@ tlv_t* dserial_tlv(sbuff_t* b) {
   t->type = (unsigned char)dserial_char(b);
   t->length = (unsigned char)dserial_char(b);
 
+  printf("TLV: %u, %u\n", (uint16_t)t->type, (uint16_t)t->length);
+
   switch (t->type) {
     case TLV_PAD1:
       t->body = NULL;
       break;
     case TLV_PADN:
+      printf("padn\n");
       t->body = dserial_padn_body(t->length, b);
       break;
     case TLV_HELLO:
+      printf("Hello\n");
       t->body = dserial_hello_body(t->length, b);
       break;
     case TLV_NEIGHBOUR:
+      printf("Neighbour\n");
       t->body = dserial_neighbour_body(t->length, b);
       break;
     case TLV_DATA:
+      printf("DATA\n");
       t->body = dserial_data_body(t->length, b);
       break;
     case TLV_ACK:
+      printf("ACK\n");
       t->body = dserial_ack_body(t->length, b);
       break;
     case TLV_GO_AWAY:
+      printf("GoAWAY\n");
       t->body = dserial_go_away_body(t->length, b);
       break;
     case TLV_WARNING:
+      printf("WARNING\n");
       t->body = dserial_warning_body(t->length, b);
       break;
     default:
@@ -241,8 +251,8 @@ hello_body_t* dserial_hello_body(size_t tlv_len, sbuff_t* b) {
 }
 
 neighbour_body_t* dserial_neighbour_body(size_t tlv_len, sbuff_t* b) {
-  unsigned char* ip = malloc(sizeof(char) * 16);
-  ip = (unsigned char*)dserial_str(16, b);  // TODO test conversion [] -> *
+  unsigned char* ip =
+      (unsigned char*)dserial_str(16, b);
   uint16_t port = dserial_short(b);
   neighbour_body_t* out = new_neighbour_body(ip, port);
   free(ip);

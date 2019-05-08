@@ -1,4 +1,5 @@
 #include "test.h"
+#include <arpa/inet.h>
 
 int test_msg() {
   tlv_t* t = new_tlv_padn(10);
@@ -39,12 +40,14 @@ int test_msg() {
   // char_array_to_msg(*addr, m_addr);
 
   // // bug ici...
+  printf("bug\n");
   print_msg(m2);
 
   free_msg(m);
   free_msg(m2);
   free_sbuff(sb);
   free(db);
+  return 1;
 }
 
 int test_dllist() {
@@ -61,7 +64,7 @@ int test_dllist() {
 
   dllist_node_t* n = l->first;
 
-  printf("%d\n", l->size);
+  printf("%ld\n", l->size);
 
   for (int i = 0; i < l->size; i++, n = n->next) {
     printf("%d | ", *((int*)n->data));
@@ -101,4 +104,42 @@ int test_neighbour_map() {
   print_neighbour_map(m);
 
   return 1;
+}
+
+int test_connect(char* port) {
+  // struct in6_addr addr;
+  // char addr_[16];
+
+  // // char* ip = malloc(sizeof(char) * 16);
+
+  // int rc = inet_pton(AF_INET6, "2001:660:3301:9200::51c2:1b9b", &addr_);
+  // if (rc <= 0)
+  //   printf("erreur conversion ip\n");
+  // // printf("%.16s", addr.__in6_u.__u6_addr8);
+  // char ip_str[INET6_ADDRSTRLEN];
+  // inet_ntop(AF_INET6, addr_, ip_str, INET6_ADDRSTRLEN);
+  // printf("%s\n", ip_str);
+  // struct sockaddr_in6 a;
+  // a.sin6_port;
+
+  // uint16_t port = 1212;
+  // tlv_t* t = new_tlv_hello(false, 1234567890, NULL);
+  // msg_t* m = new_msg(&t, 1);
+
+  // //print_msg(m);
+
+  // // char** addr = malloc(sizeof(char*));
+  // sbuff_t* sb = new_sbuff();
+
+  // printf("Conversion to char[]...\n");
+  // // msg_to_char_array(m, addr);
+  // serial_msg(m, sb);
+
+  // udp_send(addr_, port, sb);
+
+  // add_nbr("jch.irif.fr", "1212");
+  int i = 10;
+  wait(&i);
+  add_nbr((unsigned char*)"jch.irif.fr", port);
+  return 0;
 }

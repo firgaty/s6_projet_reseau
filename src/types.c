@@ -256,13 +256,15 @@ sbuff_t* new_sbuff() {
   return b;
 }
 
-sbuff_t* new_dsbuff(char* data, size_t data_len) {
+sbuff_t* new_dsbuff(unsigned char* data, size_t data_len) {
   sbuff_t* b = malloc(sizeof(sbuff_t));
 
   b->data = data;
   b->size = data_len;
   b->next = 0;
   b->real_size = data_len;
+
+  printf("Buffer size: %ld\n", b->real_size);
 
   return b;
 }
@@ -281,36 +283,36 @@ void free_sbuff(sbuff_t* b) {
 
 /**
  * ####################
- * NEIGHBOUR
- * ####################
- */
-
-/**
- * @brief Generates a new Neighbour.
- *
- * @param char
- * @param port
- * @return neighbour_t*
- */
-neighbour_t* new_neighbour(unsigned char* ip, uint16_t port) {
-  neighbour_t* n = malloc(sizeof(neighbour_t));
-  n->ip = ip;
-  n->port = port;
-  n->last_hello = 0;
-  n->last_hello_long = 0;
-  return n;
-}
-
-void free_neighbour(neighbour_t* n) {
-  free(n->ip);
-  free(n);
-}
-
-/**
- * ####################
  * DLLIST
  * ####################
  */
+
+dll_msg_t* new_dll_msg(msg_t* m, sbuff_t* b) {
+  dll_msg_t* e = malloc(sizeof(dll_msg_t));
+  e->buffer = b;
+  e->msg = m;
+  return e;
+}
+void free_dll_msg(dll_msg_t* m, bool msg, bool buff) {
+  if (msg)
+    free_msg(m->msg);
+  if (buff)
+    free_sbuff(m->buffer);
+  free(m);
+}
+
+dll_neighbour_t* new_dll_neighbour(unsigned char* ip, uint16_t port) {
+  dll_neighbour_t* n = malloc(sizeof(dll_neighbour_t));
+  n->ip = ip;
+  n->port = port;
+  n->tries = 0;
+  return n;
+}
+
+void free_dll_neighbour(dll_neighbour_t* n) {
+  // free(n->ip);
+  free(n);
+}
 
 void dllist_free(dllist_t* list, bool erase_data) {
   if (dllist_is_empty(list))
@@ -364,7 +366,7 @@ neighbour_entry_t* new_neighbour_entry(char* ip, uint16_t port) {
   neighbour_entry_t* e = malloc(sizeof(neighbour_entry_t));
   e->ip = malloc(sizeof(char) * 16);
   memcpy(e->ip, ip, 16);
-  printf("%.*s\n", 16, e->ip);
+  //printf("%.*s\n", 16, e->ip);
   e->port = port;
   e->last_short_hello = 0;
   e->last_long_hello = 0;
@@ -380,4 +382,8 @@ neighbour_map_t* new_neighbour_map() {
   neighbour_map_t* m = malloc(sizeof(neighbour_map_t));
   map_init(m);
   return m;
+}
+
+dll_neighbour_t* new_dll_neighbour_from_entry(neighbour_entry_t* e) {
+  return new_dll_neighbour((unsigned char*)e->ip, e->port);
 }

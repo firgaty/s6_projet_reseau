@@ -8,19 +8,63 @@
  * @copyright Copyright (c) 2019
  *
  */
+#include <stdio.h>
+#include <pthread.h>
+#include <readline/readline.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
+#include <arpa/inet.h>
 
-#include "msg.h"
-#include "test.h"
 #include "connect.h"
+#include "msg.h"
+#include "msg_list.h"
+#include "shared_resources.h"
+#include "test.h"
+#include "interface.h"
+#include "types.h"
+#include "serialization.h"
 
-int main(int argc, char const *argv[]) {
-
-	// Initialisation du générateur de nombres aléatoires.
+int main(int argc, char const* argv[]) {
+  // Initialisation du générateur de nombres aléatoires.
   srand((unsigned)time(NULL));
+  new_client_id();
 
-  start_server(1);
+  //set_server_port((uint16_t)atoi(argv[1]));
+  set_server_port("4243");
+
+  char* line;
+
+  while (1) {
+    line = readline("Input alias: ");
+    if (strlen(line) > 0 && strlen(line) < 1024 - 1) {
+      new_client_name(line, strlen(line));
+      free(line);
+      break;
+    }
+    free(line);
+  }
+
+  // pthread_t thread_id[3];
+  pthread_t srv;
+
+  printf("Thread_creation...\n");
+
+  pthread_create(&srv, NULL, udp_server, NULL);
+  //pthread_create(&thread_id[1], NULL, list_loop, (void*)&thread_id[1]);
+  //pthread_create(&thread_id[2], NULL, listen_input, (void*)&thread_id[2]);
+
+  // pthread_join(thread_id[2], NULL);
+
+  // test_connect((char*)argv[2]);
+  test_connect("1212");
+
+  listen_input();
+
+  
+
+  printf("End of threads...\n");
+  // start_server(1);
   // test_msg();
   // test_dllist();
   // test_neighbour_map();

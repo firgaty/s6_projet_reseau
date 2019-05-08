@@ -2,7 +2,7 @@
 
 short map_add_new_neighbour(neighbour_map_t* map, char* ip, uint16_t port) {
   char* key = new_neighbour_key(ip, port);
-  neighbour_entry_t **entry = malloc(sizeof(neighbour_entry_t*));
+  neighbour_entry_t** entry = malloc(sizeof(neighbour_entry_t*));
   entry = map_get(map, key);
   short out = 0;
 
@@ -17,13 +17,12 @@ short map_add_new_neighbour(neighbour_map_t* map, char* ip, uint16_t port) {
 
 short map_add_neighbour_entry(neighbour_map_t* map, neighbour_entry_t* e) {
   char* key = new_neighbour_key(e->ip, e->port);
-  neighbour_entry_t **entry = malloc(sizeof(neighbour_entry_t *));
+  neighbour_entry_t** entry = malloc(sizeof(neighbour_entry_t*));
   entry = map_get(map, key);
-  
+
   short out = 0;
-  
-  if (!(entry))
-  {
+
+  if (!(entry)) {
     map_set(map, key, e);
     out = 1;
   }
@@ -67,7 +66,7 @@ short map_transfer_neighbour(neighbour_map_t* in,
 char* new_neighbour_key(char* ip, uint16_t port) {
   char* key = malloc(sizeof(char) * 18);
   snprintf(key, 18, "%.*s%u", 16, ip, port);
-  return key; // Il faut free à chaque usage.
+  return key;  // Il faut free à chaque usage.
 }
 
 void print_neighbour_entry(neighbour_entry_t* e) {
@@ -90,4 +89,17 @@ void print_neighbour_map(neighbour_map_t* m) {
     else
       printf("No entry...\n");
   }
+}
+
+void map_send_hello(neighbour_map_t* m, time_t delay) {
+  const char *key;
+  map_iter_t iter = map_iter(m);
+
+  while ((key = map_next(m, &iter))) {
+    
+  }
+}
+
+void map_update_hello(char*ip, uint16_t port) {
+
 }

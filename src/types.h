@@ -316,7 +316,7 @@ sbuff_t* new_sbuff();
  * @param data_len Length of the data
  * @return sbuff_t* buffer.
  */
-sbuff_t *new_dsbuff(char *data, size_t data_len);
+sbuff_t *new_dsbuff(unsigned char *data, size_t data_len);
 
 /**
  * @brief Allocates space for the buffer data.
@@ -329,36 +329,41 @@ void sbuff_reserve_space(sbuff_t *b, size_t bytes);
 void free_sbuff(sbuff_t *b);
 
 /**
- * ####################################
- * NEIGHBOUR
- * ####################################
- */
-
-/**
- * @brief Neighbour type.
- *
- */
-typedef struct neighbour_t {
-  unsigned char* ip;
-  uint16_t port;
-  time_t last_hello;
-  time_t last_hello_long;
-} neighbour_t;
-
-neighbour_t* new_neighbour(unsigned char* ip, uint16_t port);
-void free_neighbour(neighbour_t* n);
-
-/**
  * ####################
  * DLLIST
  * ####################
  */
 
 /**
+ * @brief Msg type for dllist_t.
+ *
+ */
+typedef struct dll_msg_t {
+  msg_t *msg;
+  sbuff_t *buffer;
+} dll_msg_t;
+
+dll_msg_t *new_dll_msg(msg_t *m, sbuff_t *b);
+void free_dll_msg(dll_msg_t* m, bool msg, bool buff);
+
+/**
+ * @brief Neighbour type for dllist_t.
+ *
+ */
+typedef struct dll_neighbour_t {
+  unsigned char* ip;
+  uint16_t port;
+  uint8_t tries;
+} dll_neighbour_t;
+
+dll_neighbour_t* new_dll_neighbour(unsigned char* ip, uint16_t port);
+void free_dll_neighbour(dll_neighbour_t* n);
+
+/**
  * @brief All the node types for the dllist_t, add a new type here when needed.
  *
  */
-typedef enum { DLL_NEIGHBOUR, DLL_INT } DLL_NODE_TYPE;
+typedef enum { DLL_NEIGHBOUR, DLL_INT, DLL_MSG } DLL_NODE_TYPE;
 
 /**
  * @brief Generic doubly linked list node.
@@ -426,7 +431,7 @@ bool dllist_is_empty(dllist_t* list);
 
 /**
  * ####################
- * DLLIST
+ * MAP
  * ####################
  */
 
@@ -435,8 +440,7 @@ bool dllist_is_empty(dllist_t* list);
  *
  */
 typedef struct neighbour_entry_t {
-  char* ip;
-  uint16_t port;
+  struct addrinfo* addr;
   time_t last_short_hello;
   time_t last_long_hello;
 } neighbour_entry_t;
@@ -466,5 +470,7 @@ void free_neighbour_entry(neighbour_entry_t* e);
  * @return neighbour_map_t* Map generated.
  */
 neighbour_map_t* new_neighbour_map();
+
+dll_neighbour_t *new_dll_neighbour_from_entry(neighbour_entry_t *e);
 
 #endif  // !TYPES_H_
