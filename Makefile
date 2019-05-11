@@ -1,9 +1,11 @@
-NAME ?= client
+NAME ?= miaouchat
 
 CC ?= gcc
-CFLAGS ?= -Wall -g
+CFLAGS ?=
+# CFLAGS ?= -Wall -g
 # CFLAGS ?= -Wall -Werror -Wextra
-LDLIBS ?= -lreadline -lnsl -lpthread -lreadline
+LDLIBS ?= -O0 -rdynamic -lreadline -lnsl -lpthread -lreadline -pipe
+GTKLIB=`pkg-config --cflags --libs gtk+-3.0`
 
 SRC_DIR ?= ./src
 BUILD_DIR ?= ./build
@@ -14,14 +16,15 @@ SRC := $(wildcard $(SRC_DIR)/*.c)
 build: $(NAME)
 
 $(NAME): $(SRC)
-	@$(CC) $(CFLAGS) $(LDLIBS) $(SRC) -o $(NAME)
+	@$(CC) $(CFLAGS) $(LDLIBS) $(GTKLIB) $(SRC) -o $(NAME)
 
 clean:
+	rm -f *.o $(NAME)
 
 fclean: clean
 	@rm -f $(NAME)
 
-re: fclean all
+re: fclean $(NAME)
 
 doc:
 	doxygen Doxyfile

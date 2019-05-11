@@ -25,7 +25,86 @@
 #include "types.h"
 #include "serialization.h"
 
-int main(int argc, char const* argv[]) {
+#include <gtk/gtk.h>
+
+// GtkWidget *g_label_infos;
+GtkWidget *g_text_view_messages;
+GtkWidget *g_text_view_messages_buffer;
+GtkWidget *g_entry_message;
+GtkWidget *g_button_send;
+
+char *buf = "~";
+
+int main(int argc, char *argv[]) {
+    GtkBuilder *builder;
+    GtkWidget *window;
+
+    gtk_init(&argc, &argv);
+
+    builder = gtk_builder_new();
+    gtk_builder_add_from_file(builder, "glade/window_main.glade", NULL);
+
+    window = GTK_WIDGET(gtk_builder_get_object(builder, "window_main"));
+    gtk_builder_connect_signals(builder, NULL);
+    // g_label_infos = GTK_WIDGET(gtk_builder_get_object(builder, "label_infos"));
+    g_text_view_messages = GTK_WIDGET(gtk_builder_get_object(builder, "text_view_messages"));
+    g_text_view_messages_buffer = GTK_WIDGET(gtk_builder_get_object(builder, "text_view_messages_buffer"));
+    g_entry_message = GTK_WIDGET(gtk_builder_get_object(builder, "entry_message"));
+    g_button_send = GTK_WIDGET(gtk_builder_get_object(builder, "button_send"));
+
+    g_object_unref(builder);
+
+    gtk_widget_show(window);
+    gtk_main();
+
+    return 0;
+}
+
+void on_entry_message_activate() {
+	send_message();
+}
+
+void on_button_send_clicked() {
+	send_message();
+}
+
+void on_window_main_destroy()
+{
+    gtk_main_quit();
+}
+
+// char *get_text() {
+// 	GtkTextIter start, end;
+// 	GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(g_text_view_messages));
+// 	gchar *text;
+// 	gtk_get_buffer_get_bounds(buffer, &start, &end);
+// 	text = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
+// 	return text;
+// }
+
+void add_message() {
+	// GtkTextBuffer *buffer;
+	// // GtkTextMark *mark;
+	// GtkTextIter start;
+	// GtkTextIter end;
+	const gchar *text = "facile";
+
+	// buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(g_text_view_messages));
+	// gtk_text_buffer_get_start_iter(buffer, &start);
+	// gtk_text_buffer_get_end_iter(buffer, &end);
+	// // gtk_text_buffer_get_iter_at_mark(buffer, &iter, mark);
+	// gtk_text_buffer_insert(buffer, &start, text, -1);
+	gtk_text_buffer_set_text(g_text_view_messages_buffer, text, -1);
+}
+
+void send_message() {
+	gtk_entry_set_text(GTK_ENTRY(g_entry_message), "");
+	add_message();
+	// gtk_text_view_set_buffer(GTK_TEXT_VIEW(g_text_view_messages), "~~");
+}
+
+// int main(int argc, char const* argv[]) {
+int main2(void) {
   // Initialisation du générateur de nombres aléatoires.
   srand((unsigned)time(NULL));
   new_client_id();
@@ -61,7 +140,7 @@ int main(int argc, char const* argv[]) {
 
   listen_input();
 
-  
+
 
   printf("End of threads...\n");
   // start_server(1);
