@@ -6,6 +6,7 @@
 #include "dllist.h"
 #include "shared_resources.h"
 #include "types.h"
+#include "gui.h"
 
 bool is_in_msg_list(data_body_t* b);
 bool add_msg(data_body_t* b);

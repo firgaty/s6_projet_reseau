@@ -11,10 +11,8 @@
 #ifndef LIST_H
 #define LIST_H
 
-#define TRUE 1
-#define FALSE 0
-
-#include <stdio.h>
+#define FALSE (0)
+#define TRUE (!FALSE)
 
 #include "types.h"
 

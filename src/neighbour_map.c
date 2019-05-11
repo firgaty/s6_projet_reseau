@@ -17,7 +17,8 @@
 
 short map_add_neighbour_entry(neighbour_map_t* map, neighbour_entry_t* e) {
   struct sockaddr_in6* addr = (struct sockaddr_in6*)e->addr->ai_addr;
-  char* str_ip[INET6_ADDRSTRLEN];
+  // char* str_ip[INET6_ADDRSTRLEN];
+  char str_ip[INET6_ADDRSTRLEN];
   inet_ntop(AF_INET6, &addr->sin6_addr, str_ip, INET6_ADDRSTRLEN);
   char* key = new_neighbour_key(str_ip, htons(addr->sin6_port));
   neighbour_entry_t** entry = malloc(sizeof(neighbour_entry_t*));
@@ -82,7 +83,8 @@ void print_neighbour_map(neighbour_map_t* m) {
   char* key;
   map_iter_t iter = map_iter(m);
 
-  while ((key = map_next(m, &iter))) {
+  // while ((key = map_next(m, &iter))) {
+  while ((key = (char *)map_next(m, &iter))) {
     neighbour_entry_t** e = map_get(m, key);
     if ((*e))
       print_neighbour_entry(*e);

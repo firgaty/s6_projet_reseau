@@ -22,7 +22,7 @@ bool add_msg(data_body_t* b) {
   if (is_in_msg_list(b))
     return 0;
 
-  // TODO print msg.
+  print_message(b->data, b->data_len, MSG_USER);
 
   char* msg_key = new_data_key(b->sender_id, b->nonce);
 
