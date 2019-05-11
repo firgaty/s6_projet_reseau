@@ -200,8 +200,6 @@ int main(int argc, char *argv[]) {
 
   listen_input();
 
-
-
   printf("End of threads...\n");
   // start_server(1);
   // test_msg();

@@ -1,9 +1,9 @@
 
 # Usage
 
-- `$ make` génère le fichier executable `client`.
+- `$ make` génère le fichier exécutable `miaouchat`.
+- `$ doxygen Doxyfile` génère la documentation.
 - `$ ./manual` ouvre un nouvel onglet du navigateur par défaut sur la racine de la documentation doxygen.
-- `$ doxygen Doxyfile` génère cette même documentation.
 
 La documentation de la map est dans `./doc/map`.
 
