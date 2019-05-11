@@ -232,9 +232,10 @@ void free_tlv(tlv_t* t) {
   free(t);
 }
 
-void free_msg(msg_t* m) {
-  for (int i = 0; i < m->tlv_nb; i++)
-    free_tlv(m->body[i]);
+void free_msg(msg_t* m, bool tlv) {
+  if(free_tlv)
+    for (int i = 0; i < m->tlv_nb; i++)
+      free_tlv(m->body[i]);
   free(m->body);
   free(m);
 }
@@ -287,24 +288,20 @@ void free_sbuff(sbuff_t* b) {
  * ####################
  */
 
-dll_msg_t* new_dll_msg(msg_t* m, sbuff_t* b) {
+dll_msg_t* new_dll_msg(data_body_t* b) {
   dll_msg_t* e = malloc(sizeof(dll_msg_t));
-  e->buffer = b;
-  e->msg = m;
+  e->data = b;
   return e;
 }
-void free_dll_msg(dll_msg_t* m, bool msg, bool buff) {
-  if (msg)
-    free_msg(m->msg);
-  if (buff)
-    free_sbuff(m->buffer);
+void free_dll_msg(dll_msg_t* m, bool data) {
+  if (data)
+    free_data_body(m->data);
   free(m);
 }
 
-dll_neighbour_t* new_dll_neighbour(neighbour_entry_t *b) {
+dll_neighbour_t* new_dll_neighbour(neighbour_entry_t *b, char* key) {
   dll_neighbour_t* n = malloc(sizeof(dll_neighbour_t));
-  n->addr = malloc(sizeof(struct sockaddr_in6));
-  n->addr = (struct sockaddr_in6*)b->addr->ai_addr;
+  n->map_key = key;
   n->tries = 0;
   return n;
 }
@@ -358,7 +355,7 @@ bool dllist_is_empty(dllist_t* list) {
 
 /**
  * ####################
- * DLLIST
+ * NEIGHBOUR MAP
  * ####################
  */
 
@@ -382,6 +379,25 @@ neighbour_map_t* new_neighbour_map() {
   return m;
 }
 
+char* new_neighbour_key(char* ip, uint16_t port) {
+  size_t len = INET6_ADDRSTRLEN + sizeof(port) + 1;
+  char* key = malloc(sizeof(char) * len);
+  snprintf(key, len, "%s%u", ip, port);
+  return key;  // Il faut free à chaque usage.
+}
+
 // dll_neighbour_t* new_dll_neighbour_from_entry(neighbour_entry_t* e) {
 //   return new_dll_neighbour((struct sockaddr_in6*)e->addr->ai_addr);
 // }
+
+/**
+ * ####################
+ * DATA MAP
+ * ####################
+ */
+
+char* new_data_key(uint64_t id, uint32_t nonce) {
+  char* key = malloc(sizeof(char) * 20);
+  snprintf(key, 20,"%ld%d", id, nonce);
+  return key;
+}

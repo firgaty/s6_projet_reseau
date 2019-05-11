@@ -79,15 +79,6 @@ short map_transfer_neighbour(neighbour_map_t* in,
                              char* ip,
                              uint16_t port);
 
-/**
- * @brief Generated the key for a given neighbour.
- *
- * @param ip IP.
- * @param port Port.
- * @return char* Key
- */
-char* new_neighbour_key(char* ip, uint16_t port);
-
 void print_neighbour_entry(neighbour_entry_t* e);
 void print_neighbour_map(neighbour_map_t* m);
 

@@ -14,13 +14,13 @@
 #define TYPES_H_
 
 #include <inttypes.h>
+#include <netdb.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-#include <sys/types.h>
 #include <sys/socket.h>
-#include <netdb.h>
+#include <sys/types.h>
+#include <time.h>
 
 #include "map.h"
 
@@ -63,7 +63,7 @@ typedef struct data {
   uint32_t nonce;
   unsigned char type;
   size_t data_len;
-  char *data;
+  char* data;
 } data_body_t;
 
 typedef struct ack {
@@ -79,7 +79,7 @@ typedef struct go_away {
 
 typedef struct warning {
   size_t msg_len;
-  char *message;
+  char* message;
 } warning_body_t;
 
 typedef struct tlv_t {
@@ -220,7 +220,10 @@ tlv_t* new_tlv_neighbour(unsigned char* ip, uint16_t port);
  * @param data_len Data length.
  * @return tlv_t* Data TLV.
  */
-tlv_t* new_tlv_data(uint64_t sender_id, DATA_TYPE type, char* data, size_t data_len);
+tlv_t* new_tlv_data(uint64_t sender_id,
+                    DATA_TYPE type,
+                    char* data,
+                    size_t data_len);
 
 /**
  * @brief Generates an Ack TLV.
@@ -244,9 +247,7 @@ tlv_t* new_tlv_ack(uint64_t sender_id, uint32_t nonce);
  * @param message_len Length of the message.
  * @return tlv_t* GoAway TLV.
  */
-tlv_t* new_tlv_go_away(char code,
-                       char* message,
-                       size_t message_len);
+tlv_t* new_tlv_go_away(char code, char* message, size_t message_len);
 
 /**
  * @brief Generates a Warning TLV.
@@ -269,7 +270,7 @@ msg_t* new_msg(tlv_t** ts, size_t ts_size);
 /**
  * @brief Generates a nonce from a user ID, using time.
  *
- * @param id 
+ * @param id
  * @return uint32_t
  */
 uint32_t new_nonce(uint64_t id);
@@ -281,8 +282,8 @@ void free_data_body(data_body_t* b);
 void free_ack_body(ack_body_t* b);
 void free_go_away_body(go_away_body_t* b);
 void free_warning_body(warning_body_t* b);
-void free_tlv(tlv_t *t);
-void free_msg(msg_t *t);
+void free_tlv(tlv_t* t);
+void free_msg(msg_t* t, bool free_tlv);
 
 /**
  * ####################################
@@ -302,7 +303,7 @@ typedef struct sbuff_t {
   size_t size;
   size_t next;
   size_t real_size;
-  void *data;
+  void* data;
 } sbuff_t;
 
 /**
@@ -314,12 +315,12 @@ sbuff_t* new_sbuff();
 
 /**
  * @brief Creates a new buffer du deserialize.
- * 
+ *
  * @param data Data
  * @param data_len Length of the data
  * @return sbuff_t* buffer.
  */
-sbuff_t *new_dsbuff(unsigned char *data, size_t data_len);
+sbuff_t* new_dsbuff(unsigned char* data, size_t data_len);
 
 /**
  * @brief Allocates space for the buffer data.
@@ -327,14 +328,13 @@ sbuff_t *new_dsbuff(unsigned char *data, size_t data_len);
  * @param b Buffer
  * @param bytes Bytes to reserve.
  */
-void sbuff_reserve_space(sbuff_t *b, size_t bytes);
+void sbuff_reserve_space(sbuff_t* b, size_t bytes);
 
-void free_sbuff(sbuff_t *b);
-
+void free_sbuff(sbuff_t* b);
 
 /**
  * ####################
- * MAP
+ * NEIGHBOUR MAP
  * ####################
  */
 
@@ -375,30 +375,42 @@ void free_neighbour_entry(neighbour_entry_t* e);
 neighbour_map_t* new_neighbour_map();
 
 /**
+ * @brief Generated the key for a given neighbour.
+ *
+ * @param ip IP.
+ * @param port Port.
+ * @return char* Key
+ */
+char* new_neighbour_key(char* ip, uint16_t port);
+
+/**
+ * ####################
+ * DATA MAP
+ * ####################
+ */
+
+typedef struct data_entry_t {
+  data_body_t* body;
+} data_entry_t;
+
+typedef map_t(data_entry_t*) data_map_t;
+
+char *new_data_key(uint64_t id, uint32_t nonce);
+
+/**
  * ####################
  * DLLIST
  * ####################
  */
 
 /**
- * @brief Msg type for dllist_t.
- *
- */
-typedef struct dll_msg_t {
-  msg_t *msg;
-  sbuff_t *buffer;
-} dll_msg_t;
-
-dll_msg_t *new_dll_msg(msg_t *m, sbuff_t *b);
-void free_dll_msg(dll_msg_t* m, bool msg, bool buff);
-
-/**
  * @brief Neighbour type for dllist_t.
  *
  */
 typedef struct dll_neighbour_t {
-  struct sockaddr_in6 *addr;
+  char* map_key;
   uint8_t tries;
+  time_t next_try;
 } dll_neighbour_t;
 
 dll_neighbour_t* new_dll_neighbour(neighbour_entry_t* b);
@@ -411,7 +423,7 @@ void free_dll_neighbour(dll_neighbour_t* n);
 typedef enum { DLL_NEIGHBOUR, DLL_INT, DLL_MSG } DLL_NODE_TYPE;
 
 /**
- * @brief Generic doubly linked list node.
+ * @brief Generic double linked list node.
  *
  */
 typedef struct dllist_node_t {
@@ -422,7 +434,7 @@ typedef struct dllist_node_t {
 } dllist_node_t;
 
 /**
- * @brief Generic doubly linked list.
+ * @brief Generic double linked list.
  *
  */
 typedef struct dllist_t {
@@ -431,6 +443,18 @@ typedef struct dllist_t {
   size_t size;
   DLL_NODE_TYPE type;
 } dllist_t;
+
+/**
+ * @brief Msg type for dllist_t.
+ *
+ */
+typedef struct dll_msg_t {
+  data_body_t* data;
+  dllist_t* neighbours;
+} dll_msg_t;
+
+dll_msg_t* new_dll_msg(data_body_t* data);
+void free_dll_msg(dll_msg_t* m, bool data);
 
 /**
  * @brief Generates a new dllist
@@ -475,5 +499,6 @@ void dllist_free_node(dllist_node_t* node, bool erase_data);
 bool dllist_is_empty(dllist_t* list);
 
 // dll_neighbour_t *new_dll_neighbour_from_entry(neighbour_entry_t *e);
+dllist_t* new_neighbour_list(char* key_to_bypass);
 
 #endif  // !TYPES_H_

@@ -66,13 +66,6 @@ short map_transfer_neighbour(neighbour_map_t* in,
   return map_add_neighbour_entry(out, e);
 }
 
-char* new_neighbour_key(char* ip, uint16_t port) {
-  size_t len = INET6_ADDRSTRLEN + sizeof(port) + 1;
-  char* key = malloc(sizeof(char) * len);
-  snprintf(key, len, "%s%u", ip, port);
-  return key;  // Il faut free à chaque usage.
-}
-
 void print_neighbour_entry(neighbour_entry_t* e) {
   struct sockaddr_in6* addr = (struct sockaddr_in6*)e->addr->ai_addr;
   char* ip_str[INET6_ADDRSTRLEN];
