@@ -31,7 +31,7 @@ int main(int argc, char const* argv[]) {
   new_client_id();
 
   //set_server_port((uint16_t)atoi(argv[1]));
-  set_server_port("4243");
+  set_server_port(4242);
 
   char* line;
 

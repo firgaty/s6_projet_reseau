@@ -18,6 +18,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
 
 #include "map.h"
 
@@ -26,7 +29,7 @@
 #define MSG_VERSION 2
 #define MSG_TLV_NB_DEF 64
 
-typedef enum { VISIBLE = 0, HIDDEN = 1 } DATA_TYPE;
+typedef enum { DATA_VISIBLE = 0, DATA_HIDDEN = 1 } DATA_TYPE;
 
 typedef enum {
   TLV_UNDEFINED = -1,
@@ -328,6 +331,49 @@ void sbuff_reserve_space(sbuff_t *b, size_t bytes);
 
 void free_sbuff(sbuff_t *b);
 
+
+/**
+ * ####################
+ * MAP
+ * ####################
+ */
+
+/**
+ * @brief neighbour entry for the neighbour_map_t.
+ *
+ */
+typedef struct neighbour_entry_t {
+  struct addrinfo* addr;
+  time_t last_short_hello;
+  time_t last_long_hello;
+} neighbour_entry_t;
+
+typedef map_t(neighbour_entry_t*) neighbour_map_t;
+
+/**
+ * @brief Generates a neighbour_entry_t with set ip and port and last and long
+ * hello at 0.
+ *
+ * @param ip IP
+ * @param port Port
+ * @return neighbour_entry_t* Generated entry.
+ */
+neighbour_entry_t* new_neighbour_entry(struct addrinfo* addr);
+
+/**
+ * @brief Frees all allocated ressources to a neighbour entry.
+ *
+ * @param e Entry to free.
+ */
+void free_neighbour_entry(neighbour_entry_t* e);
+
+/**
+ * @brief Generates an empty neighbour_map_t.
+ *
+ * @return neighbour_map_t* Map generated.
+ */
+neighbour_map_t* new_neighbour_map();
+
 /**
  * ####################
  * DLLIST
@@ -351,12 +397,11 @@ void free_dll_msg(dll_msg_t* m, bool msg, bool buff);
  *
  */
 typedef struct dll_neighbour_t {
-  unsigned char* ip;
-  uint16_t port;
+  struct sockaddr_in6 *addr;
   uint8_t tries;
 } dll_neighbour_t;
 
-dll_neighbour_t* new_dll_neighbour(unsigned char* ip, uint16_t port);
+dll_neighbour_t* new_dll_neighbour(neighbour_entry_t* b);
 void free_dll_neighbour(dll_neighbour_t* n);
 
 /**
@@ -429,48 +474,6 @@ void dllist_free_node(dllist_node_t* node, bool erase_data);
  */
 bool dllist_is_empty(dllist_t* list);
 
-/**
- * ####################
- * MAP
- * ####################
- */
-
-/**
- * @brief neighbour entry for the neighbour_map_t.
- *
- */
-typedef struct neighbour_entry_t {
-  struct addrinfo* addr;
-  time_t last_short_hello;
-  time_t last_long_hello;
-} neighbour_entry_t;
-
-typedef map_t(neighbour_entry_t*) neighbour_map_t;
-
-/**
- * @brief Generates a neighbour_entry_t with set ip and port and last and long
- * hello at 0.
- *
- * @param ip IP
- * @param port Port
- * @return neighbour_entry_t* Generated entry.
- */
-neighbour_entry_t* new_neighbour_entry(char* ip, uint16_t port);
-
-/**
- * @brief Frees all allocated ressources to a neighbour entry.
- *
- * @param e Entry to free.
- */
-void free_neighbour_entry(neighbour_entry_t* e);
-
-/**
- * @brief Generates an empty neighbour_map_t.
- *
- * @return neighbour_map_t* Map generated.
- */
-neighbour_map_t* new_neighbour_map();
-
-dll_neighbour_t *new_dll_neighbour_from_entry(neighbour_entry_t *e);
+// dll_neighbour_t *new_dll_neighbour_from_entry(neighbour_entry_t *e);
 
 #endif  // !TYPES_H_

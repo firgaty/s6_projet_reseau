@@ -301,10 +301,10 @@ void free_dll_msg(dll_msg_t* m, bool msg, bool buff) {
   free(m);
 }
 
-dll_neighbour_t* new_dll_neighbour(unsigned char* ip, uint16_t port) {
+dll_neighbour_t* new_dll_neighbour(neighbour_entry_t *b) {
   dll_neighbour_t* n = malloc(sizeof(dll_neighbour_t));
-  n->ip = ip;
-  n->port = port;
+  n->addr = malloc(sizeof(struct sockaddr_in6));
+  n->addr = (struct sockaddr_in6*)b->addr->ai_addr;
   n->tries = 0;
   return n;
 }
@@ -362,19 +362,17 @@ bool dllist_is_empty(dllist_t* list) {
  * ####################
  */
 
-neighbour_entry_t* new_neighbour_entry(char* ip, uint16_t port) {
-  neighbour_entry_t* e = malloc(sizeof(neighbour_entry_t));
-  e->ip = malloc(sizeof(char) * 16);
-  memcpy(e->ip, ip, 16);
-  //printf("%.*s\n", 16, e->ip);
-  e->port = port;
+neighbour_entry_t* new_neighbour_entry(struct addrinfo* addr) {
+  neighbour_entry_t *e = malloc(sizeof(neighbour_entry_t));
+  e->addr = malloc(sizeof(struct addrinfo));
+  e->addr = addr;
   e->last_short_hello = 0;
   e->last_long_hello = 0;
   return e;
 }
 
 void free_neighbour_entry(neighbour_entry_t* e) {
-  free(e->ip);
+  freeaddrinfo(e->addr);
   free(e);
 }
 
@@ -384,6 +382,6 @@ neighbour_map_t* new_neighbour_map() {
   return m;
 }
 
-dll_neighbour_t* new_dll_neighbour_from_entry(neighbour_entry_t* e) {
-  return new_dll_neighbour((unsigned char*)e->ip, e->port);
-}
+// dll_neighbour_t* new_dll_neighbour_from_entry(neighbour_entry_t* e) {
+//   return new_dll_neighbour((struct sockaddr_in6*)e->addr->ai_addr);
+// }

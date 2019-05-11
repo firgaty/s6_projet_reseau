@@ -37,16 +37,14 @@ void set_server_port(uint16_t port);
 // void* start_server(int loglevel);
 
 void* udp_server();
-void udp_send(unsigned char* ip, uint16_t port, sbuff_t* buffer);
+int udp_send(struct sockaddr_in6* client, sbuff_t* buffer);
 
 void* process_datagram(unsigned char* input, size_t len, struct sockaddr_in6* client);
 void process_hello(hello_body_t* b, struct sockaddr_in6* client);
 void process_neighbour(neighbour_body_t* b);
-void process_data(data_body_t* b);
+void process_data(data_body_t* b, struct sockaddr_in6* client);
 void process_warning(warning_body_t* b);
 void process_ack(ack_body_t* b);
 void process_go_away(go_away_body_t* b);
-
-void add_nbr(unsigned char* host, char* port);
 
 #endif  // ! UDP_H_

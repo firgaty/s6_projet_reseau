@@ -15,8 +15,9 @@
 #include <pthread.h>
 
 #include "map.h"
-#include "types.h"
 #include "shared_resources.h"
+#include "types.h"
+#include "connect.h"
 
 /**
  * @brief Adds a new neighbour form ip and port.
@@ -91,6 +92,8 @@ void print_neighbour_entry(neighbour_entry_t* e);
 void print_neighbour_map(neighbour_map_t* m);
 
 void map_send_hello(neighbour_map_t* m, time_t delay);
-void map_update_hello(char *ip, uint16_t port);
+void map_update_hello(char* ip, uint16_t port);
+
+void add_new_neighbour(unsigned char* host, char* port);
 
 #endif  // NEIGHBOUR_MAP_H_

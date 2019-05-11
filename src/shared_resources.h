@@ -19,12 +19,36 @@
 
 pthread_mutex_t cur_neighbours_lock;
 pthread_mutex_t pot_neighbours_lock;
-
-neighbour_map_t* get_cur_neighbours();
-neighbour_map_t* get_pot_neighbours();
-
 pthread_mutex_t msg_list_lock;
 
+/**
+ * @brief Get the cur neighbours object
+ * 
+ * Il ne faut pas oublier de déverouiller 
+ * le mutex cur_neighbours_lock.
+ * 
+ * @return neighbour_map_t* 
+ */
+neighbour_map_t* get_cur_neighbours();
+
+/**
+ * @brief Get the pot neighbours object
+ * 
+ * Il ne faut pas oublier de déverouiller 
+ * le mutex pot_neighbours_lock.
+ * 
+ * @return neighbour_map_t* 
+ */
+neighbour_map_t* get_pot_neighbours();
+
+/**
+ * @brief Get the msg list object
+ * 
+ * Il ne faut pas oublier de déverouiller 
+ * le mutex msg_list_lock.
+ * 
+ * @return dllist_t* 
+ */
 dllist_t* get_msg_list();
 
 // ID of the client.

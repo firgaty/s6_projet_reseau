@@ -87,21 +87,21 @@ int test_dllist() {
 }
 
 int test_neighbour_map() {
-  neighbour_map_t* m = new_neighbour_map();
+  // neighbour_map_t* m = new_neighbour_map();
 
-  neighbour_entry_t* e1 = new_neighbour_entry("ffffffffffffffff", 100);
-  neighbour_entry_t* e2 = new_neighbour_entry("ffffffffffffeeee", 100);
-  neighbour_entry_t* e3 = new_neighbour_entry("ffffffffeeeeeeee", 100);
-  neighbour_entry_t* e4 = new_neighbour_entry("ffffeeeeeeeeeeee", 100);
-  neighbour_entry_t* e5 = new_neighbour_entry("eeeeeeeeeeeeeeee", 100);
+  // neighbour_entry_t* e1 = new_neighbour_entry("ffffffffffffffff", 100);
+  // neighbour_entry_t* e2 = new_neighbour_entry("ffffffffffffeeee", 100);
+  // neighbour_entry_t* e3 = new_neighbour_entry("ffffffffeeeeeeee", 100);
+  // neighbour_entry_t* e4 = new_neighbour_entry("ffffeeeeeeeeeeee", 100);
+  // neighbour_entry_t* e5 = new_neighbour_entry("eeeeeeeeeeeeeeee", 100);
 
-  map_add_neighbour_entry(m, e1);
-  map_add_neighbour_entry(m, e2);
-  map_add_neighbour_entry(m, e3);
-  map_add_neighbour_entry(m, e4);
-  map_add_neighbour_entry(m, e5);
+  // map_add_neighbour_entry(m, e1);
+  // map_add_neighbour_entry(m, e2);
+  // map_add_neighbour_entry(m, e3);
+  // map_add_neighbour_entry(m, e4);
+  // map_add_neighbour_entry(m, e5);
 
-  print_neighbour_map(m);
+  // print_neighbour_map(m);
 
   return 1;
 }
@@ -140,6 +140,6 @@ int test_connect(char* port) {
   // add_nbr("jch.irif.fr", "1212");
   int i = 10;
   wait(&i);
-  add_nbr((unsigned char*)"jch.irif.fr", port);
+  add_new_neighbour((unsigned char*)"jch.irif.fr", port);
   return 0;
 }
