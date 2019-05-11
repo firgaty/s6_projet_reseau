@@ -34,10 +34,12 @@ GtkWidget *g_text_view_messages_buffer;
 GtkWidget *g_entry_message;
 GtkWidget *g_button_send;
 
-void init_gui(int argc, char *argv[]) {
+void *init_gui() {
+// void *init_gui(int argc, char *argv[]) {
   GtkBuilder *builder;
 
-  gtk_init(&argc, &argv);
+  gtk_init(0, NULL);
+  // gtk_init(&argc, &argv);
 
   builder = gtk_builder_new();
   gtk_builder_add_from_file(builder, "glade/window_main.glade", NULL);
@@ -54,11 +56,6 @@ void init_gui(int argc, char *argv[]) {
 
   gtk_widget_show(window);
   gtk_main();
-}
-
-int main(int argc, char *argv[]) {
-		init_gui(argc, argv);
-    return (EXIT_SUCCESS);
 }
 
 void on_entry_message_activate() {
@@ -155,8 +152,6 @@ void print_message(const char *data, size_t len, size_t type) {
 	gtk_text_buffer_get_end_iter(GTK_TEXT_BUFFER(g_text_view_messages_buffer), &end);
 	gtk_text_buffer_insert(GTK_TEXT_BUFFER(g_text_view_messages_buffer), &end, d, -1);
 	gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(g_text_view_messages), &end, 0.1, FALSE, 0, 0);
-
-	update_title(12);
 }
 
 void send_message() {
@@ -167,7 +162,7 @@ void send_message() {
 	printf("%s\n", s);
 }
 
-int main2(void) {
+int main(int argc, char *argv[]) {
   // Initialisation du générateur de nombres aléatoires.
   srand((unsigned)time(NULL));
   new_client_id();
@@ -189,10 +184,12 @@ int main2(void) {
 
   // pthread_t thread_id[3];
   pthread_t srv;
+  pthread_t gui;
 
   printf("Thread_creation...\n");
 
   pthread_create(&srv, NULL, udp_server, NULL);
+  pthread_create(&gui, NULL, init_gui, NULL);
   //pthread_create(&thread_id[1], NULL, list_loop, (void*)&thread_id[1]);
   //pthread_create(&thread_id[2], NULL, listen_input, (void*)&thread_id[2]);
 
