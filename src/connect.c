@@ -175,7 +175,7 @@ void process_data(data_body_t* b, struct sockaddr_in6* client) {
   // Traitement.
   dllist_t* l = get_msg_list();
 
-  // TODO 
+  // TODO
 
   pthread_mutex_unlock(&msg_list_lock);
   

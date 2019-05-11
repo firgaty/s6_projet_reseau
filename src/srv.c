@@ -16,6 +16,7 @@
 // 	server.sin6_port = htons(PORT);
 
 
+<<<<<<< HEAD
 // 	rc = bind(s, (struct sockaddr *)&server, sizeof(server));
 // 	if (rc < 0) {
 // 		// euh..
@@ -38,3 +39,22 @@
 // 	srv_init();
 // 	return 0;
 // }
+=======
+	rc = bind(s, (struct sockaddr *)&server, sizeof(server));
+	if (rc < 0) {
+		// euh..
+	}
+	while (1) {
+		unsigned int client_len;
+		rc = recvfrom(s, req, 4096, 0, (struct sockaddr *)&client, &client_len);
+		if (rc < 0) {
+			// hum..
+			perror("rcvfrom");
+			continue;
+		}
+		// on traite la requête.
+		char *reply = "hello";
+		rc = sendto(s, reply, sizeof(reply), 0, (const struct sockaddr *)&client, client_len);
+	}
+}
+>>>>>>> 85395fc35a689c8a723332fda22631487b2621e1
