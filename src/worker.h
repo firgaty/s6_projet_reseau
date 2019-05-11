@@ -3,6 +3,7 @@
 
 #include "shared_resources.h"
 #include "types.h"
+#include "connect.h"
 
 void* worker_loop();
 

@@ -21,6 +21,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <time.h>
+#include <math.h>
 
 #include "map.h"
 
@@ -226,6 +227,14 @@ tlv_t* new_tlv_data(uint64_t sender_id,
                     size_t data_len);
 
 /**
+ * @brief Generates a Data TLV from a data_body_t.
+ * 
+ * @param body Body.
+ * @return tlv_t* Data TLV.
+ */
+tlv_t *new_tlv_data_b(data_body_t *body);
+
+/**
  * @brief Generates an Ack TLV.
  *
  * @param sender_id ID of the Ack creator.
@@ -390,7 +399,8 @@ typedef struct dllist_msg_t {
   data_body_t* body;
 } dllist_msg_t;
 
-dllist_msg_t* new_dllist_msg(char* key, data_body_t* body);
+time_t set_time_send(uint16_t tries);
+dllist_msg_t *new_dllist_msg(char *key, data_body_t *body);
 void free_dllist_msg(dllist_msg_t* m, bool data);
 
 /**

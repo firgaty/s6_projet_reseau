@@ -122,6 +122,15 @@ tlv_t* new_tlv_data(uint64_t sender_id,
   return out;
 }
 
+tlv_t *new_tlv_data_b(data_body_t *body) {
+  tlv_t* out = malloc(sizeof(tlv_t));
+  out->type = (unsigned char)TLV_DATA;
+  out->length = sizeof(char) * body->data_len + sizeof(uint64_t) + sizeof(uint32_t) +
+                sizeof(char);
+  out->body = body;
+  return out;
+}
+
 tlv_t* new_tlv_ack(uint64_t sender_id, uint32_t nonce) {
   tlv_t* out = malloc(sizeof(tlv_t));
   out->type = (unsigned char)TLV_ACK;
@@ -289,9 +298,19 @@ void free_sbuff(sbuff_t* b) {
  * ####################
  */
 
+time_t set_time_send(uint16_t tries) {
+  uint64_t min, max;
+  min = (uint64_t)pow(2, (double)tries);
+  max = (uint64_t)pow(2, (double)tries + 1);
+  uint64_t r = random() % (max - min) + min;
+  return time(NULL); + r;
+}
+
 dllist_msg_t* new_dllist_msg(char* key, data_body_t* body) {
   dllist_msg_t* e = malloc(sizeof(dllist_msg_t));
+  e->tries = 0;
   e->map_key = key;
+  e->time_send = set_time_send(e->tries);
   e->body = body;
   return e;
 }
