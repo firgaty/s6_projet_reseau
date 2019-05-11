@@ -94,8 +94,6 @@ Author: Félix Desmaretz, Louis Gavalda
               <object class="GtkLabel" id="label_sym">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_top">10</property>
-                <property name="margin_bottom">10</property>
                 <property name="label" translatable="yes">Voisins sym. : 0</property>
               </object>
               <packing>

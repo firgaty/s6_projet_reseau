@@ -28,36 +28,37 @@
 #include <gtk/gtk.h>
 
 // GtkWidget *g_label_infos;
+GtkWidget *window;
 GtkWidget *g_text_view_messages;
 GtkWidget *g_text_view_messages_buffer;
 GtkWidget *g_entry_message;
 GtkWidget *g_button_send;
 
-char *buf = "~";
+void init_gui(int argc, char *argv[]) {
+  GtkBuilder *builder;
+
+  gtk_init(&argc, &argv);
+
+  builder = gtk_builder_new();
+  gtk_builder_add_from_file(builder, "glade/window_main.glade", NULL);
+
+  window = GTK_WIDGET(gtk_builder_get_object(builder, "window_main"));
+  gtk_builder_connect_signals(builder, NULL);
+  // g_label_infos = GTK_WIDGET(gtk_builder_get_object(builder, "label_infos"));
+  g_text_view_messages = GTK_WIDGET(gtk_builder_get_object(builder, "text_view_messages"));
+  g_text_view_messages_buffer = GTK_TEXT_BUFFER(gtk_builder_get_object(builder, "text_view_messages_buffer"));
+  g_entry_message = GTK_WIDGET(gtk_builder_get_object(builder, "entry_message"));
+  g_button_send = GTK_WIDGET(gtk_builder_get_object(builder, "button_send"));
+
+  g_object_unref(builder);
+
+  gtk_widget_show(window);
+  gtk_main();
+}
 
 int main(int argc, char *argv[]) {
-    GtkBuilder *builder;
-    GtkWidget *window;
-
-    gtk_init(&argc, &argv);
-
-    builder = gtk_builder_new();
-    gtk_builder_add_from_file(builder, "glade/window_main.glade", NULL);
-
-    window = GTK_WIDGET(gtk_builder_get_object(builder, "window_main"));
-    gtk_builder_connect_signals(builder, NULL);
-    // g_label_infos = GTK_WIDGET(gtk_builder_get_object(builder, "label_infos"));
-    g_text_view_messages = GTK_WIDGET(gtk_builder_get_object(builder, "text_view_messages"));
-    g_text_view_messages_buffer = GTK_WIDGET(gtk_builder_get_object(builder, "text_view_messages_buffer"));
-    g_entry_message = GTK_WIDGET(gtk_builder_get_object(builder, "entry_message"));
-    g_button_send = GTK_WIDGET(gtk_builder_get_object(builder, "button_send"));
-
-    g_object_unref(builder);
-
-    gtk_widget_show(window);
-    gtk_main();
-
-    return 0;
+		init_gui(argc, argv);
+    return (EXIT_SUCCESS);
 }
 
 void on_entry_message_activate() {
@@ -73,6 +74,15 @@ void on_window_main_destroy()
     gtk_main_quit();
 }
 
+// nsym: nombre de voisins symétriques
+void update_title(size_t nsym) {
+	char title[512];
+
+	memset(title, 0, 512);
+	snprintf(title, 512, "[%d] miaouchat", nsym);
+	gtk_window_set_title(GTK_WINDOW(window), title);
+}
+
 // char *get_text() {
 // 	GtkTextIter start, end;
 // 	GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(g_text_view_messages));
@@ -82,28 +92,81 @@ void on_window_main_destroy()
 // 	return text;
 // }
 
-void add_message() {
-	// GtkTextBuffer *buffer;
-	// // GtkTextMark *mark;
-	// GtkTextIter start;
-	// GtkTextIter end;
-	const gchar *text = "facile";
+size_t nick_len(const char *data, size_t data_len) {
+	size_t nlen;
 
-	// buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(g_text_view_messages));
-	// gtk_text_buffer_get_start_iter(buffer, &start);
-	// gtk_text_buffer_get_end_iter(buffer, &end);
-	// // gtk_text_buffer_get_iter_at_mark(buffer, &iter, mark);
-	// gtk_text_buffer_insert(buffer, &start, text, -1);
-	gtk_text_buffer_set_text(g_text_view_messages_buffer, text, -1);
+	nlen = 0;
+	while (nlen <= data_len && *data != ':') {
+		nlen++;
+		data++;
+	}
+	return nlen == data_len ? 0 : nlen;
+}
+
+void print_message(const char *data, size_t len, size_t type) {
+	time_t rt;
+	struct tm *t;
+	size_t dlen;
+	size_t nlen;
+	char *d;
+	GtkTextIter end;
+	GtkTextTag *tag;
+
+	time(&rt);
+	t = localtime(&rt);
+
+	// dlen = data[len - 1] == '\0' ? 10 + 1 + len + 1 : 10 + 1 + len + 2;
+	// d = calloc(dlen, sizeof(char));
+	// // comme un doute sur le +2..
+	// snprintf(d + 10 + 1, len + 2, "%s\n", data);
+
+	dlen = 10 + 1 + 1;
+	d = calloc(dlen, sizeof(char));
+	if (!d) {
+		fprintf(stderr, "[!] Erreur d’allocation mémoire.");
+	}
+	strftime(d, dlen, "[%H:%M:%S] ", t);
+	gtk_text_buffer_get_end_iter(GTK_TEXT_BUFFER(g_text_view_messages_buffer), &end);
+	tag = gtk_text_buffer_create_tag(GTK_TEXT_BUFFER(g_text_view_messages_buffer), NULL, "weight", PANGO_WEIGHT_LIGHT, NULL);
+	gtk_text_buffer_insert_with_tags(GTK_TEXT_BUFFER(g_text_view_messages_buffer), &end, d, -1, tag, NULL);
+
+	nlen = nick_len(data, len);
+	dlen = 1 + nlen + 1 + 1 + 1;
+	free(d);
+	d = calloc(dlen, sizeof(char));
+	if (!d) {
+		fprintf(stderr, "[!] Erreur d’allocation mémoire.");
+	}
+	d[0] = '<';
+	memcpy(d + 1, data, nlen);
+	d[1 + nlen] = '>';
+	d[1 + nlen + 1] = ' ';
+	gtk_text_buffer_get_end_iter(GTK_TEXT_BUFFER(g_text_view_messages_buffer), &end);
+	tag = gtk_text_buffer_create_tag(GTK_TEXT_BUFFER(g_text_view_messages_buffer), NULL, "weight", PANGO_WEIGHT_BOLD, NULL);
+	gtk_text_buffer_insert_with_tags(GTK_TEXT_BUFFER(g_text_view_messages_buffer), &end, d, -1, tag, NULL);
+
+	dlen = len + 1 + 1 - nlen - 1;
+	free(d);
+	d = calloc(dlen, sizeof(char));
+	if (!d) {
+		fprintf(stderr, "[!] Erreur d’allocation mémoire.");
+	}
+	snprintf(d, dlen, "%s\n", data + nlen + 1);
+	gtk_text_buffer_get_end_iter(GTK_TEXT_BUFFER(g_text_view_messages_buffer), &end);
+	gtk_text_buffer_insert(GTK_TEXT_BUFFER(g_text_view_messages_buffer), &end, d, -1);
+	gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(g_text_view_messages), &end, 0.1, FALSE, 0, 0);
+
+	update_title(12);
 }
 
 void send_message() {
+	const char *s = gtk_entry_get_text(GTK_ENTRY(g_entry_message));
+	// const char *s = "nickk:Hello la famille";
+	print_message (s, strlen(s), 0);
 	gtk_entry_set_text(GTK_ENTRY(g_entry_message), "");
-	add_message();
-	// gtk_text_view_set_buffer(GTK_TEXT_VIEW(g_text_view_messages), "~~");
+	printf("%s\n", s);
 }
 
-// int main(int argc, char const* argv[]) {
 int main2(void) {
   // Initialisation du générateur de nombres aléatoires.
   srand((unsigned)time(NULL));

@@ -27,11 +27,11 @@ Author: Félix Desmaretz, Louis Gavalda
 
 -->
 <interface>
-  <requires lib="gtk+" version="3.12"/>
+  <requires lib="gtk+" version="3.18"/>
   <!-- interface-license-type mit -->
   <!-- interface-name miaouchat -->
   <!-- interface-authors F\303\251lix Desmaretz, Louis Gavalda -->
-  <object class="GtkTextBuffer" id="buffer"/>
+  <object class="GtkTextBuffer" id="text_view_messages_buffer"/>
   <object class="GtkWindow" id="window_main">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">[~] miaouchat</property>
@@ -94,6 +94,8 @@ Author: Félix Desmaretz, Louis Gavalda
               <object class="GtkLabel" id="label_sym">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
                 <property name="label" translatable="yes">Voisins sym. : 0</property>
               </object>
               <packing>
@@ -154,14 +156,18 @@ Author: Félix Desmaretz, Louis Gavalda
             <property name="height_request">480</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="shadow_type">in</property>
             <child>
-              <object class="GtkTextView" id="display_messages">
+              <object class="GtkTextView" id="text_view_messages">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="editable">False</property>
                 <property name="wrap_mode">word</property>
+                <property name="left_margin">3</property>
+                <property name="right_margin">3</property>
+                <property name="top_margin">2</property>
+                <property name="bottom_margin">2</property>
                 <property name="cursor_visible">False</property>
-                <property name="buffer">buffer</property>
+                <property name="buffer">text_view_messages_buffer</property>
                 <style>
                   <class name="background-color: red"/>
                 </style>
