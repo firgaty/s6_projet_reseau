@@ -334,71 +334,6 @@ void free_sbuff(sbuff_t* b);
 
 /**
  * ####################
- * NEIGHBOUR MAP
- * ####################
- */
-
-/**
- * @brief neighbour entry for the neighbour_map_t.
- *
- */
-typedef struct neighbour_entry_t {
-  struct addrinfo* addr;
-  time_t last_short_hello;
-  time_t last_long_hello;
-} neighbour_entry_t;
-
-typedef map_t(neighbour_entry_t*) neighbour_map_t;
-
-/**
- * @brief Generates a neighbour_entry_t with set ip and port and last and long
- * hello at 0.
- *
- * @param ip IP
- * @param port Port
- * @return neighbour_entry_t* Generated entry.
- */
-neighbour_entry_t* new_neighbour_entry(struct addrinfo* addr);
-
-/**
- * @brief Frees all allocated ressources to a neighbour entry.
- *
- * @param e Entry to free.
- */
-void free_neighbour_entry(neighbour_entry_t* e);
-
-/**
- * @brief Generates an empty neighbour_map_t.
- *
- * @return neighbour_map_t* Map generated.
- */
-neighbour_map_t* new_neighbour_map();
-
-/**
- * @brief Generated the key for a given neighbour.
- *
- * @param ip IP.
- * @param port Port.
- * @return char* Key
- */
-char* new_neighbour_key(char* ip, uint16_t port);
-
-/**
- * ####################
- * DATA MAP
- * ####################
- */
-
-typedef struct data_entry_t {
-  data_body_t* body;
-} data_entry_t;
-
-typedef map_t(data_entry_t*) data_map_t;
-
-char *new_data_key(uint64_t id, uint32_t nonce);
-
-/**
- * ####################
  * DLLIST
  * ####################
  */
@@ -413,14 +348,14 @@ typedef struct dll_neighbour_t {
   time_t next_try;
 } dll_neighbour_t;
 
-dll_neighbour_t* new_dll_neighbour(neighbour_entry_t* b);
+// dll_neighbour_t* new_dll_neighbour(neighbour_entry_t* b);
 void free_dll_neighbour(dll_neighbour_t* n);
 
 /**
  * @brief All the node types for the dllist_t, add a new type here when needed.
  *
  */
-typedef enum { DLL_NEIGHBOUR, DLL_INT, DLL_MSG } DLL_NODE_TYPE;
+typedef enum { DLL_NEIGHBOUR, DLL_INT, DLL_STRING, DLL_MSG } DLL_NODE_TYPE;
 
 /**
  * @brief Generic double linked list node.
@@ -448,13 +383,15 @@ typedef struct dllist_t {
  * @brief Msg type for dllist_t.
  *
  */
-typedef struct dll_msg_t {
-  data_body_t* data;
-  dllist_t* neighbours;
-} dll_msg_t;
+typedef struct dllist_msg_t {
+  time_t time_send;
+  uint16_t tries;
+  char* map_key;
+  data_body_t* body;
+} dllist_msg_t;
 
-dll_msg_t* new_dll_msg(data_body_t* data);
-void free_dll_msg(dll_msg_t* m, bool data);
+dllist_msg_t* new_dllist_msg(char* key, data_body_t* body);
+void free_dllist_msg(dllist_msg_t* m, bool data);
 
 /**
  * @brief Generates a new dllist
@@ -500,5 +437,69 @@ bool dllist_is_empty(dllist_t* list);
 
 // dll_neighbour_t *new_dll_neighbour_from_entry(neighbour_entry_t *e);
 dllist_t* new_neighbour_list(char* key_to_bypass);
+
+/**
+ * ####################
+ * NEIGHBOUR MAP
+ * ####################
+ */
+
+/**
+ * @brief neighbour entry for the neighbour_map_t.
+ *
+ */
+typedef struct neighbour_entry_t {
+  struct addrinfo* addr;
+  time_t last_short_hello;
+  time_t last_long_hello;
+  uint64_t pmtu;
+  dllist_t* msg_to_send;
+} neighbour_entry_t;
+
+typedef map_t(neighbour_entry_t*) neighbour_map_t;
+
+/**
+ * @brief Generates a neighbour_entry_t with set ip and port and last and long
+ * hello at 0.
+ *
+ * @param ip IP
+ * @param port Port
+ * @return neighbour_entry_t* Generated entry.
+ */
+neighbour_entry_t* new_neighbour_entry(struct addrinfo* addr);
+
+/**
+ * @brief Frees all allocated ressources to a neighbour entry.
+ *
+ * @param e Entry to free.
+ */
+void free_neighbour_entry(neighbour_entry_t* e);
+
+/**
+ * @brief Generates an empty neighbour_map_t.
+ *
+ * @return neighbour_map_t* Map generated.
+ */
+neighbour_map_t* new_neighbour_map();
+
+/**
+ * @brief Generated the key for a given neighbour.
+ *
+ * @param ip IP.
+ * @param port Port.
+ * @return char* Key
+ */
+char* new_neighbour_key(char* ip, uint16_t port);
+
+/**
+ * ####################
+ * DATA MAP
+ * ####################
+ */
+
+typedef map_t(data_body_t*) data_map_t;
+
+data_map_t* new_data_map();
+char* new_data_key(uint64_t id, uint32_t nonce);
 
 #endif  // !TYPES_H_

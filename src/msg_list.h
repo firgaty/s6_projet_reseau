@@ -4,14 +4,18 @@
 #include <pthread.h>
 
 #include "dllist.h"
-#include "types.h"
 #include "shared_resources.h"
+#include "types.h"
 
-void *list_loop();
+bool is_in_msg_list(data_body_t* b);
+bool add_msg(data_body_t* b);
 
-
-bool is_in_msg_list(data_body_t *m);
-bool add_msg(data_body_t *m);
-dll_msg_t *get_dll_msg(data_body_t *m);
+/**
+ * @brief Removes the n oldest messages.
+ *
+ * @param n Number of messages to remove.
+ */
+void rm_n_msg(size_t n);
+bool rm_msg();
 
 #endif  // !MSG_LIST_H_

@@ -160,7 +160,7 @@ void send_hello(struct sockaddr_in6* pair,
   sbuff_t* b = new_sbuff();
   serial_msg(m, b);
   udp_send(pair, b);
-  free_msg(t, true);
+  free_msg(m, true);
   free_sbuff(b);
 }
 
@@ -223,10 +223,10 @@ void process_data(data_body_t* b, struct sockaddr_in6* client) {
     return;
 
   // fonction qui affiche le contenu d'un DATA.
-  printf("%.*s", b->data_len, b->data);
+  printf("%.*s", (int)b->data_len, b->data);
 }
 void process_warning(warning_body_t* b) {
-  printf("/!\\ %.*s\n", b->msg_len, b->message);
+  printf("/!\\ %.*s\n", (int)b->msg_len, b->message);
 
   // print warning
 }

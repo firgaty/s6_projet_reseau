@@ -233,9 +233,10 @@ void free_tlv(tlv_t* t) {
 }
 
 void free_msg(msg_t* m, bool tlv) {
-  if(free_tlv)
+  if (tlv) {
     for (int i = 0; i < m->tlv_nb; i++)
       free_tlv(m->body[i]);
+  }
   free(m->body);
   free(m);
 }
@@ -288,18 +289,19 @@ void free_sbuff(sbuff_t* b) {
  * ####################
  */
 
-dll_msg_t* new_dll_msg(data_body_t* b) {
-  dll_msg_t* e = malloc(sizeof(dll_msg_t));
-  e->data = b;
+dllist_msg_t* new_dllist_msg(char* key, data_body_t* body) {
+  dllist_msg_t* e = malloc(sizeof(dllist_msg_t));
+  e->map_key = key;
+  e->body = body;
   return e;
 }
-void free_dll_msg(dll_msg_t* m, bool data) {
+void free_dllist_msg(dllist_msg_t* m, bool data) {
   if (data)
-    free_data_body(m->data);
+    free_data_body(m->body);
   free(m);
 }
 
-dll_neighbour_t* new_dll_neighbour(neighbour_entry_t *b, char* key) {
+dll_neighbour_t* new_dll_neighbour(neighbour_entry_t* b, char* key) {
   dll_neighbour_t* n = malloc(sizeof(dll_neighbour_t));
   n->map_key = key;
   n->tries = 0;
@@ -325,6 +327,8 @@ void dllist_free_node(dllist_node_t* node, bool erase_data) {
   node->next = NULL;
   node->prev = NULL;
   if (erase_data) {
+    if (node->type == DLL_STRING || node->type == DLL_INT)
+      free(node->data);
     // TODO ajouter les destructeurs nécessaires en fonction du type de donnée.
     printf("node freed\n");
     free(node->data);
@@ -360,16 +364,19 @@ bool dllist_is_empty(dllist_t* list) {
  */
 
 neighbour_entry_t* new_neighbour_entry(struct addrinfo* addr) {
-  neighbour_entry_t *e = malloc(sizeof(neighbour_entry_t));
+  neighbour_entry_t* e = malloc(sizeof(neighbour_entry_t));
   e->addr = malloc(sizeof(struct addrinfo));
   e->addr = addr;
   e->last_short_hello = 0;
   e->last_long_hello = 0;
+  e->pmtu = 1024;
+  e->msg_to_send = malloc(sizeof(dllist_t));
   return e;
 }
 
 void free_neighbour_entry(neighbour_entry_t* e) {
   freeaddrinfo(e->addr);
+  // TODO free dllist
   free(e);
 }
 
@@ -396,8 +403,14 @@ char* new_neighbour_key(char* ip, uint16_t port) {
  * ####################
  */
 
+data_map_t* new_data_map() {
+  data_map_t* m = malloc(sizeof(data_map_t));
+  map_init(m);
+  return m;
+}
+
 char* new_data_key(uint64_t id, uint32_t nonce) {
   char* key = malloc(sizeof(char) * 20);
-  snprintf(key, 20,"%ld%d", id, nonce);
+  snprintf(key, 20, "%ld%d", id, nonce);
   return key;
 }
