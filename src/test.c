@@ -43,8 +43,8 @@ int test_msg() {
   printf("bug\n");
   print_msg(m2);
 
-  free_msg(m);
-  free_msg(m2);
+  free_msg(m, false);
+  free_msg(m2, true);
   free_sbuff(sb);
   free(db);
   return 1;

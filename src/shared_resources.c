@@ -20,12 +20,22 @@ neighbour_map_t* get_pot_neighbours() {
   return m;
 }
 
+data_map_t* get_msg_map() {
+  pthread_mutex_lock(&msg_map_lock);
+
+  static data_map_t* m = NULL;
+  if (m == NULL) {
+    m = new_data_map();
+  }
+  return m;
+}
+
 dllist_t* get_msg_list() {
   pthread_mutex_lock(&msg_list_lock);
 
   static dllist_t* l = NULL;
   if (l == NULL) {
-    l = new_dllist(DLL_MSG);
+    l = new_dllist(DLL_STRING);
   }
   return l;
 }

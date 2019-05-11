@@ -151,6 +151,45 @@ void* process_datagram(unsigned char* input,
   return 0;
 }
 
+void send_hello(struct sockaddr_in6* pair,
+                bool is_long,
+                uint64_t src_id,
+                uint64_t dst_id) {
+  tlv_t* t = new_tlv_hello(is_long, src_id, dst_id);
+  msg_t* m = new_msg(&t, 1);
+  sbuff_t* b = new_sbuff();
+  serial_msg(m, b);
+  udp_send(pair, b);
+  free_msg(m, true);
+  free_sbuff(b);
+}
+
+void send_ack(struct sockaddr_in6* pair, uint64_t sender_id, uint32_t nonce) {
+  tlv_t* t = new_tlv_ack(sender_id, nonce);
+  msg_t* m = new_msg(&t, 1);
+
+  sbuff_t* buff = new_sbuff();
+  serial_msg(m, buff);
+
+  udp_send(pair, buff);
+
+  free_msg(m, true);
+  free_sbuff(buff);
+}
+
+void send_go_away(struct sockaddr_in6* pair) {
+  tlv_t* t = new_tlv_go_away(2, NULL, 0);
+  msg_t* m = new_msg(&t, 1);
+
+  sbuff_t* buff = new_sbuff();
+  serial_msg(m, buff);
+
+  udp_send(pair, buff);
+
+  free_msg(m, true);
+  free_sbuff(buff);
+}
+
 void process_hello(hello_body_t* b, struct sockaddr_in6* client) {
   char str_ip[INET6_ADDRSTRLEN];
   inet_ntop(AF_INET6, &client->sin6_addr, str_ip, INET6_ADDRSTRLEN);
@@ -159,18 +198,18 @@ void process_hello(hello_body_t* b, struct sockaddr_in6* client) {
     printf("%lu", b->dest_id);
   printf("| %.*s : ", INET6_ADDRSTRLEN, str_ip);
   printf("%u\n", ntohs(client->sin6_port));
+
+  if (!b->is_long) {
+    send_hello(client, true, b->source_id, client_id);
+  }
+
+  free_hello_body(b);
 }
 
 void process_neighbour(neighbour_body_t* b);
 void process_data(data_body_t* b, struct sockaddr_in6* client) {
   // envoit du TLV ACK.
-  msg_t* m = new_msg(new_ack_body(&b->sender_id, b->nonce), 1);
-  sbuff_t *buff = new_sbuff();
-  serial_msg(m, buff);
-  udp_send(client, buff);
-
-  free_msg(m);
-  free_sbuff(buff);
+  send_ack(client, b->sender_id, b->nonce);
 
   // Traitement.
   dllist_t* l = get_msg_list();
@@ -178,14 +217,20 @@ void process_data(data_body_t* b, struct sockaddr_in6* client) {
   // TODO
 
   pthread_mutex_unlock(&msg_list_lock);
-  
+
   // Si d'un type non implementé, on ne fait rien.
   if (b->type != 0)
     return;
 
   // fonction qui affiche le contenu d'un DATA.
-  printf("%.*s", b->data_len, b->data);
+  printf("%.*s", (int)b->data_len, b->data);
 }
-void process_warning(warning_body_t* b);
+void process_warning(warning_body_t* b) {
+  printf("/!\\ %.*s\n", (int)b->msg_len, b->message);
+
+  // print warning
+}
+
 void process_ack(ack_body_t* b);
+
 void process_go_away(go_away_body_t* b);

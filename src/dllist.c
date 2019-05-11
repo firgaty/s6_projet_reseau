@@ -40,7 +40,7 @@ void* dllist_pop_back(dllist_t* list) {
     return 0;
 
   dllist_node_t* n = list->last;
-  void *data = n->data;
+  void* data = n->data;
 
   if (dllist_last_node(list)) {
     list->first = NULL;
@@ -62,7 +62,7 @@ void* dllist_pop_front(dllist_t* list) {
     return 0;
 
   dllist_node_t* n = list->first;
-  void *data = n->data;
+  void* data = n->data;
 
   if (dllist_last_node(list)) {
     list->first = NULL;
@@ -144,7 +144,7 @@ void* dllist_remove(dllist_t* list, size_t index) {
   n->next->prev = n->prev;
   n->prev->next = n->next;
 
-  void *data = n->data;
+  void* data = n->data;
 
   dllist_free_node(n, FALSE);
 
@@ -191,4 +191,17 @@ short dllist_first_node(dllist_t* list, dllist_node_t* node) {
 
 short dllist_last_node(dllist_t* list) {
   return list->first == list->last;
+}
+
+void dllist_empty(dllist_t* list, bool erase_data) {
+  if (list->first == NULL || list->last == NULL)
+    return;
+  dllist_node_t* tmp = list->first;
+  dllist_node_t* n = NULL;
+  do {
+    n = tmp->next;
+    dllist_free_node(tmp, erase_data);
+    tmp = n;
+    n = n->next;
+  } while ((n));
 }
