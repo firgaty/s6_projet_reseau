@@ -151,6 +151,13 @@ void* process_datagram(unsigned char* input,
   return 0;
 }
 
+void send_msg(struct sockaddr_in6* pair, msg_t* msg) {
+  sbuff_t *buff = new_sbuff();
+  serial_msg(msg, buff);
+  udp_send(pair, buff);
+  free_sbuff(buff);
+}
+
 void send_hello(struct sockaddr_in6* pair,
                 bool is_long,
                 uint64_t src_id,

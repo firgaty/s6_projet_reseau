@@ -39,7 +39,8 @@ void set_server_port(uint16_t port);
 void* udp_server();
 int udp_send(struct sockaddr_in6* client, sbuff_t* buffer);
 
-void send_hello(struct sockaddr_in6* pair,
+void send_msg(struct sockaddr_in6 *pair, msg_t *msg);
+void send_hello(struct sockaddr_in6 *pair,
                 bool is_long,
                 uint64_t src_id,
                 uint64_t dst_id);

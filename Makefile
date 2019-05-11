@@ -4,7 +4,7 @@ CC ?= gcc
 CFLAGS ?= -g
 # CFLAGS ?= -Wall -g
 # CFLAGS ?= -Wall -Werror -Wextra
-LDLIBS ?= -O0 -rdynamic -lreadline -lnsl -lpthread -lreadline -pipe
+LDLIBS ?= -O0 -rdynamic -lreadline -lnsl -lpthread -lreadline -pipe -lm
 GTKLIB=`pkg-config --cflags --libs gtk+-3.0`
 
 SRC_DIR ?= ./src

@@ -17,9 +17,66 @@ void* worker_loop() {
   }
 }
 
-void worker_send_msg(neighbour_map_t* cur,
+void worker_iter_nbr(neighbour_map_t* cur,
                      neighbour_map_t* pot,
-                     dllist_t* lsg_list,
+                     dllist_t* msg_list,
                      data_map_t* msg_map) {
+  const char* key;
+  map_iter_t iter = map_iter(&m);
+
+  while ((key = map_next(cur, &iter))) {
+    neighbour_entry_t* e = *map_get(cur, key);
+    worker_iter_msg(cur, pot, msg_list, msg_map, e);
+  }
+
+  return;
+}
+
+void worker_iter_msg(neighbour_map_t* cur,
+                     neighbour_map_t* pot,
+                     dllist_t* msg_list,
+                     data_map_t* msg_map,
+                     neighbour_entry_t* nbr) {
+  dllist_t* list = nbr->msg_to_send;
+
+  if (list->first == NULL)
+    return;
+
+  tlv_t* tab[64];
+  size_t count = 0;
+  size_t size = 0;
+  dllist_node_t* n = list->first;
+  time_t mytime = time(NULL);
+
+  while ((n)) {
+    dllist_msg_t* m = (dllist_msg_t*)n->data;
+    if (m->time_send < mytime) {
+      // envoit d'un message si l taille atteind le PMTU.
+      if (size + m->body->data_len + 4 > nbr->pmtu) {
+        msg_t* msg = new_msg(tab, count);
+        send_msg(nbr->addr, msg);
+        free_msg(msg, false);
+        for (int i = 0; i < count; i++) {
+          free(tab[i]);
+          tab[i] = NULL;
+        }
+        count = 0;
+        size = 0;
+      }
+
+      tab[count] = new_tlv_data_b(m->time_send);
+      count++;
+      size += tab[count]->length + 2;
+    }
+  }
+
+  msg_t* msg = new_msg(tab, count);
+  send_msg(nbr->addr, msg);
+  free_msg(msg, false);
+  for (int i = 0; i < count; i++) {
+    free(tab[i]);
+    tab[i] = NULL;
+  }
+
   return;
 }
