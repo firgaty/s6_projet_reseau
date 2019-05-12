@@ -46,7 +46,17 @@ dllist_t* get_msg_list() {
 
 void new_client_id() {
   // On suppose que l'on est toujours sur un system x64.
-  client_id = rand();
+  // client_id = rand();
+  // client_id[64];
+  // memset(client_id, 0, 64);
+  // // 0-terminated ? Si non, changer 63 par 64 dans la ligne ci-dessous.
+  // for (int i = 0 ; i < 63 ; i++) {
+  // 	client_id[i] = 'A' + (random() % 26);
+  // }
+   if (sizeof(int) < sizeof(long)) {
+      client_id = (long)(rand()) << (sizeof(int) * 8) | rand();
+   }
+   client_id = rand();
 }
 
 uint64_t get_client_id() {
