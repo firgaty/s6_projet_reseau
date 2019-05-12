@@ -180,8 +180,9 @@ int exec_command(const char *str) {
 	if (*str == '\0' || *str != '/') {
 		return (0);
 	}
-	if (strncmp(str, "/command ", 9) == 0) {
-		// command !
+	if (strncmp(str, "/add ", 5) == 0) {
+		print_info("Voisin ajouté :)");
+
 		return (1);
 	}
 	return (0);
@@ -199,12 +200,11 @@ void send_message() {
 		datalen = strlen(nick) + 1 + strlen(message) + 1;
 		data = calloc(datalen, sizeof(char));
 		snprintf(data, datalen, "%s:%s", nick, message);
-		add_msg(new_data_body(get_client_id(), rand(), 0, data, strlen(data)));
-		// free(data);
+		// add_msg(new_data_body(get_client_id(), rand(), 0, data, strlen(data)));
+		free(data);
 		print_message(message, strlen(message));
 	}
 	gtk_entry_set_text(GTK_ENTRY(g_entry_message), "");
-	update_label_peers(4);
-	// print_info("heuuu");
+	update_label_peers(0);
 	// printf("%s\n", message);
 }

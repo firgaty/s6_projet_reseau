@@ -31,6 +31,7 @@ bool add_msg(data_body_t* b) {
   dllist_push_front(l, DLL_STRING, msg_key);
 
   printf("add_msg\n");
+  // printf("add_msg 00~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
   neighbour_map_t* m = get_cur_neighbours();
   const char* key;
   map_iter_t iter = map_iter(&m);
@@ -42,7 +43,7 @@ bool add_msg(data_body_t* b) {
   }
 
   print_message(b->data, b->data_len);
-  
+
   pthread_mutex_unlock(&cur_neighbours_lock);
   pthread_mutex_unlock(&msg_map_lock);
   pthread_mutex_unlock(&msg_list_lock);
