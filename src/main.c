@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
   
   add_new_neighbour((unsigned char*)"jch.irif.fr", "1212");
 
-  listen_input();
+  //listen_input();
 
   printf("End of threads...\n");
   // start_server(1);

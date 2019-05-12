@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "types.h"
+#include "msg_list.h"
 
 
 void *listen_input();
