@@ -102,7 +102,7 @@ Author: Félix Desmaretz, Louis Gavalda
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="label_ram">
+              <object class="GtkLabel" id="label_info2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="margin_top">10</property>
@@ -138,6 +138,7 @@ Author: Félix Desmaretz, Louis Gavalda
               <object class="GtkLabel" id="label_peers">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Pairs : ?</property>
               </object>
               <packing>
                 <property name="left_attach">4</property>
