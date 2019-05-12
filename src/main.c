@@ -55,13 +55,15 @@ int main(int argc, char *argv[]) {
   printf("Thread_creation...\n");
 
   pthread_create(&srv, NULL, udp_server, NULL);
+  printf("SRV end.\n");
   pthread_create(&worker, NULL, worker_loop, NULL);
   pthread_create(&gui, NULL, init_gui, NULL);
   //pthread_create(&thread_id[2], NULL, listen_input, (void*)&thread_id[2]);
 
-  // pthread_join(thread_id[2], NULL);
+  pthread_join(gui, NULL);
 
   // test_connect((char*)argv[2]);
+  
   test_connect("1212");
 
   listen_input();

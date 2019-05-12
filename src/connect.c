@@ -246,6 +246,8 @@ void process_hello(hello_body_t* b, struct sockaddr_in6* client) {
   pthread_mutex_unlock(&cur_neighbours_lock);
   pthread_mutex_unlock(&pot_neighbours_lock);
 
+  printf("fin process_hello\n");
+
   free_hello_body(b);
 }
 

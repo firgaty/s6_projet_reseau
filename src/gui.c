@@ -191,6 +191,7 @@ void send_message() {
 	const char *input = gtk_entry_get_text(GTK_ENTRY(g_entry_message));
 	if (!exec_command(input)) {
 		print_message(input, strlen(input));
+		add_msg(new_data_body(get_client_id(), rand(), 0, input, strlen(input)));
 	}
 	gtk_entry_set_text(GTK_ENTRY(g_entry_message), "");
 	update_label_peers(4);

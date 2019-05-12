@@ -22,6 +22,8 @@ void* worker_loop() {
     pthread_mutex_unlock(&msg_map_lock);
     nanosleep((const struct timespec[]){{0, 500000000L}}, NULL);
   }
+
+  printf("exit loop\n");
 }
 
 void worker_iter_nbr(neighbour_map_t* cur,

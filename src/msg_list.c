@@ -22,8 +22,6 @@ bool add_msg(data_body_t* b) {
   if (is_in_msg_list(b))
     return 0;
 
-  print_message(b->data, b->data_len);
-
   char* msg_key = new_data_key(b->sender_id, b->nonce);
 
   data_map_t* msg = get_msg_map();
@@ -42,6 +40,9 @@ bool add_msg(data_body_t* b) {
     dllist_msg_t* d = new_dllist_msg(msg_key, b);
     dllist_push_front(e->msg_to_send, DLL_INT, d);
   }
+
+  print_message(b->data, b->data_len);
+  
   pthread_mutex_unlock(&cur_neighbours_lock);
   pthread_mutex_unlock(&msg_map_lock);
   pthread_mutex_unlock(&msg_list_lock);
