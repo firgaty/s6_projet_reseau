@@ -390,6 +390,7 @@ neighbour_entry_t* new_neighbour_entry(struct addrinfo* addr) {
   e->last_long_hello = 0;
   e->pmtu = 1024;
   e->msg_to_send = malloc(sizeof(dllist_t));
+  e->msg_to_send = new_dllist(DLL_MSG);
   return e;
 }
 
