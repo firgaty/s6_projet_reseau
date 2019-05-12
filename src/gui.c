@@ -176,13 +176,40 @@ void print_message(const char *data, size_t len) {
 	gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(g_text_view_messages), &end, 0.1, FALSE, 0, 0);
 }
 
-int exec_command(const char *str) {
-	if (*str == '\0' || *str != '/') {
+int exec_command(const char *message) {
+	char *p;
+	char *host;
+	// char *port;
+	size_t len;
+
+	// si le message entré n’est pas une commande
+	if (*message == '\0' || *message != '/') {
 		return (0);
 	}
-	if (strncmp(str, "/add ", 5) == 0) {
-		print_info("Voisin ajouté :)");
 
+	// commande d’ajout de voisin : /add HOST PORT
+	if (strncmp(message, "/add ", 5) == 0) {
+		p = (char *)message;
+		p += 5;
+		while (*p && *p != ' ') {
+			p++; len++;
+		}
+		host = calloc(len + 1, sizeof(char));
+		if (!host) { fprintf(stderr, "[!] Erreur d’allocation mémoire"); }
+		memcpy(host, p, len);
+		printf("%s\n", host);
+		p += len;
+		len = 0;
+		while (*p && *p != ' ') {
+			p++; len++;
+		}
+		// printf("%d\n", len);
+		// port = calloc(len + 1, sizeof(char));
+		// if (!port) { fprintf(stderr, "[!] Erreur d’allocation mémoire"); }
+		// memcpy(port, p, len);
+
+		// add_new_neighbour((unsigned char *)host, port);
+		print_info("Voisin ajouté :)");
 		return (1);
 	}
 	return (0);
