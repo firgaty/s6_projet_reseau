@@ -26,6 +26,7 @@ void *init_gui() {
 
   gtk_widget_show(window);
   gtk_main();
+	return 0;
 }
 
 void on_window_main_destroy()
@@ -57,7 +58,7 @@ void update_title(size_t nsym) {
 	char title[256];
 
 	memset(title, 0, 256);
-	snprintf(title, 256, "[%d] miaouchat", nsym);
+	snprintf(title, 256, "[%ld] miaouchat", nsym);
 	gtk_window_set_title(GTK_WINDOW(window), title);
 }
 

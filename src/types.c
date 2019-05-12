@@ -303,7 +303,7 @@ time_t set_time_send(uint16_t tries) {
   min = (uint64_t)pow(2, (double)tries);
   max = (uint64_t)pow(2, (double)tries + 1);
   uint64_t r = random() % (max - min) + min;
-  return time(NULL); + r;
+  return time(NULL) + r;
 }
 
 dllist_msg_t* new_dllist_msg(char* key, data_body_t* body) {
@@ -393,6 +393,7 @@ neighbour_entry_t* new_neighbour_entry(struct addrinfo* addr) {
   return e;
 }
 
+
 void free_neighbour_entry(neighbour_entry_t* e) {
   freeaddrinfo(e->addr);
   // TODO free dllist
@@ -410,6 +411,12 @@ char* new_neighbour_key(char* ip, uint16_t port) {
   char* key = malloc(sizeof(char) * len);
   snprintf(key, len, "%s%u", ip, port);
   return key;  // Il faut free à chaque usage.
+}
+
+char* new_neighbour_key_sock(struct sockaddr_in6* s) {
+  char str_ip[INET6_ADDRSTRLEN];
+  inet_ntop(AF_INET6, &s->sin6_addr, str_ip, INET6_ADDRSTRLEN);
+  return new_neighbour_key(str_ip, s->sin6_port);
 }
 
 // dll_neighbour_t* new_dll_neighbour_from_entry(neighbour_entry_t* e) {

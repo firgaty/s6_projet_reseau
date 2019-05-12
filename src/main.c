@@ -24,7 +24,8 @@
 #include "interface.h"
 #include "types.h"
 #include "serialization.h"
-#include "gui.h"
+// #include "gui.h"
+#include "worker.h"
 
 int main(int argc, char *argv[]) {
   // Initialisation du générateur de nombres aléatoires.
@@ -32,7 +33,7 @@ int main(int argc, char *argv[]) {
   new_client_id();
 
   //set_server_port((uint16_t)atoi(argv[1]));
-  set_server_port(4242);
+  set_server_port(4243);
 
   char* line;
 
@@ -48,13 +49,14 @@ int main(int argc, char *argv[]) {
 
   // pthread_t thread_id[3];
   pthread_t srv;
+  pthread_t worker;
   pthread_t gui;
 
   printf("Thread_creation...\n");
 
   pthread_create(&srv, NULL, udp_server, NULL);
+  pthread_create(&worker, NULL, worker_loop, NULL);
   pthread_create(&gui, NULL, init_gui, NULL);
-  //pthread_create(&thread_id[1], NULL, list_loop, (void*)&thread_id[1]);
   //pthread_create(&thread_id[2], NULL, listen_input, (void*)&thread_id[2]);
 
   // pthread_join(thread_id[2], NULL);

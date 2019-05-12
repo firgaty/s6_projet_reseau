@@ -44,6 +44,8 @@ bool add_msg(data_body_t* b) {
   pthread_mutex_unlock(&cur_neighbours_lock);
   pthread_mutex_unlock(&msg_map_lock);
   pthread_mutex_unlock(&msg_list_lock);
+  
+  return 1;
 }
 
 void rm_n_msg(size_t n) {
@@ -53,18 +55,54 @@ void rm_n_msg(size_t n) {
   }
 }
 
+// TODO test.
 bool rm_msg() {
-  // dllist_t *l = get_msg_list();
-  // char *key = (char*)l->last->data;
+  dllist_t* l = get_msg_list();
+  data_map_t* data_map = get_msg_map();
+  char* key = (char*)dllist_pop_back(l);
+  if (key == NULL) {
+    printf("no message to delete...");
+    pthread_mutex_unlock(&msg_list_lock);
+    pthread_mutex_unlock(&msg_list_lock);
+    return false;
+  }
+  data_body_t* body = *map_get(data_map, key);
 
-  // neighbour_map_t *m = get_cur_neighbours();
-  // const char *nkey;
-  // map_iter_t iter = map_iter(&m);
+  neighbour_map_t* m = get_cur_neighbours();
+  const char* nkey;
+  map_iter_t iter = map_iter(&m);
 
-  // while ((nkey = map_next(m, &iter))) {
-  //   neighbour_entry_t *e = *map_get(m, key);
-  //   dllist_msg_t *d = new_dllist_msg(nkey, b);
-  //   dllist_push_front(e->msg_to_send, DLL_INT, d);
-  // }
+  while ((nkey = map_next(m, &iter))) {
+    neighbour_entry_t* e = *map_get(m, nkey);
+    rm_nbr_msg(body->sender_id, body->nonce, e->msg_to_send);
+  }
+
+  pthread_mutex_unlock(&msg_list_lock);
+  pthread_mutex_unlock(&cur_neighbours_lock);
+  pthread_mutex_unlock(&msg_map_lock);
+
   return true;
+}
+
+bool rm_nbr_msg(uint64_t id, uint32_t nonce, dllist_t* list) {
+  if (list->first == NULL)
+    return false;
+
+  dllist_node_t* n = list->first;
+  bool found = false;
+  int index = 0;
+  for (; (n); n = n->next, index++) {
+    dllist_msg_t* d = (dllist_msg_t*)n->data;
+    if (d->body->sender_id == id && d->body->nonce == nonce) {
+      found = true;
+      break;
+    }
+  }
+
+  if (found) {
+    dllist_remove(list, index);
+    return true;
+  }
+
+  return false;
 }

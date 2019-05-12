@@ -22,6 +22,7 @@
 #include <sys/types.h>
 #include <time.h>
 #include <math.h>
+#include <arpa/inet.h>
 
 #include "map.h"
 
@@ -495,11 +496,15 @@ neighbour_map_t* new_neighbour_map();
 /**
  * @brief Generated the key for a given neighbour.
  *
+ * Il faut free la clé à chaque usage.
+ * 
  * @param ip IP.
  * @param port Port.
  * @return char* Key
  */
 char* new_neighbour_key(char* ip, uint16_t port);
+
+char *new_neighbour_key_sock(struct sockaddr_in6 *s);
 
 /**
  * ####################

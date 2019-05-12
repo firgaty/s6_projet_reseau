@@ -18,5 +18,6 @@ bool add_msg(data_body_t* b);
  */
 void rm_n_msg(size_t n);
 bool rm_msg();
+bool rm_nbr_msg(uint64_t id, uint32_t nonce, dllist_t* list);
 
 #endif  // !MSG_LIST_H_

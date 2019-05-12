@@ -37,14 +37,10 @@ short map_add_neighbour_entry(neighbour_map_t* map, neighbour_entry_t* e) {
   return out;
 }
 
-neighbour_entry_t* map_pop_neighbour(neighbour_map_t* map,
-                                     char* ip,
-                                     uint16_t port) {
-  char* key = new_neighbour_key(ip, port);
+neighbour_entry_t* map_pop_neighbour(neighbour_map_t* map, char* key) {
   neighbour_entry_t* e = *map_get(map, key);
   if ((e))
     map_remove(map, key);
-  free(key);
   return e;
 }
 
@@ -59,9 +55,8 @@ void map_delete_entry(neighbour_map_t* map, char* ip, uint16_t port) {
 
 short map_transfer_neighbour(neighbour_map_t* in,
                              neighbour_map_t* out,
-                             char* ip,
-                             uint16_t port) {
-  neighbour_entry_t* e = map_pop_neighbour(in, ip, port);
+                             char* key) {
+  neighbour_entry_t* e = map_pop_neighbour(in, key);
   if (!(e))
     return 0;
   return map_add_neighbour_entry(out, e);
@@ -84,7 +79,7 @@ void print_neighbour_map(neighbour_map_t* m) {
   map_iter_t iter = map_iter(m);
 
   // while ((key = map_next(m, &iter))) {
-  while ((key = (char *)map_next(m, &iter))) {
+  while ((key = (char*)map_next(m, &iter))) {
     neighbour_entry_t** e = map_get(m, key);
     if ((*e))
       print_neighbour_entry(*e);
@@ -142,4 +137,6 @@ void add_new_neighbour(unsigned char* host, char* port) {
     }
     status = 0;
   }
+
+  free_sbuff(sb);
 }

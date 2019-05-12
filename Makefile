@@ -1,7 +1,7 @@
 NAME ?= miaouchat
 
 CC ?= gcc
-CFLAGS ?= -g
+CFLAGS ?= -Wall -g
 # CFLAGS ?= -Wall -g
 # CFLAGS ?= -Wall -Werror -Wextra
 LDLIBS ?= -O0 -rdynamic -lreadline -lnsl -lpthread -lreadline -pipe -lm
