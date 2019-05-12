@@ -68,6 +68,8 @@ Mais tout de même : coder en C prend du temps.
 
 ## Décisions prises (tl;dr: interface avec GTK)
 
+Nous avons décidé d'utiliser des threads, un pour la partie serveur, un pour la partie qui écoute les entrées utilisateur et un qui s'occupe d'envoyer de l'inondation.
+
 **miaouchat**, c’est le nom que nous avons donné à notre logiciel.
 
 Par contre, nous tenions à avoir une vraie interface graphique, bien propre, afin que __miaouchat__ ne consiste pas seulement en une _proof of concept_ mais soit vraiment agréable à utiliser pour des personnes qui n’ont pas l’habitude du terminal.
@@ -104,7 +106,7 @@ worker |||
 
 ### Relation entre voisins
 
-![](projet/img/voisins_dia.png)
+![](doc/projet/img/voisins_dia.png)
 
 
 ## Réception d’un message

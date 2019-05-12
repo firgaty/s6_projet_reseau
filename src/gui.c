@@ -126,7 +126,7 @@ void print_message(const char *data, size_t len) {
 	GtkTextIter end;
 	GtkTextTag *tag;
 
-	if (HIDE_EMPTY_MESSAGES && len == 0 || (len == 1 && data[0] == '\0')) {
+	if (HIDE_EMPTY_MESSAGES && (len == 0 || (len == 1 && data[0] == '\0'))) {
 		return;
 	}
 
@@ -180,21 +180,30 @@ int exec_command(const char *str) {
 	if (*str == '\0' || *str != '/') {
 		return (0);
 	}
-	if (strncmp(str, "/command ", 9) == 0) {
-		// command !
+	if (strncmp(str, "/add ", 5) == 0) {
+		print_info("Voisin ajouté :)");
+
 		return (1);
 	}
 	return (0);
 }
 
 void send_message() {
-	const char *input = gtk_entry_get_text(GTK_ENTRY(g_entry_message));
-	if (!exec_command(input)) {
-		print_message(input, strlen(input));
-		add_msg(new_data_body(get_client_id(), rand(), 0, input, strlen(input)));
+	const char *message;
+	char *nick;
+	size_t datalen;
+	char *data;
+
+	message = gtk_entry_get_text(GTK_ENTRY(g_entry_message));
+	if (!exec_command(message)) {
+		nick = get_client_name();
+		datalen = strlen(nick) + 1 + strlen(message) + 1;
+		data = calloc(datalen, sizeof(char));
+		snprintf(data, datalen, "%s:%s", nick, message);
+		// add_msg(new_data_body(get_client_id(), rand(), 0, data, strlen(data)));
+		print_message(data, strlen(data));
 	}
 	gtk_entry_set_text(GTK_ENTRY(g_entry_message), "");
-	update_label_peers(4);
-	// print_info("heuuu");
-	// printf("%s\n", input);
+	update_label_peers(0);
+	// printf("%s\n", message);
 }
