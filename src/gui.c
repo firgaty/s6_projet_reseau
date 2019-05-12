@@ -9,7 +9,7 @@ void *init_gui() {
   // gtk_init(&argc, &argv);
 
   builder = gtk_builder_new();
-  gtk_builder_add_from_file(builder, "glade/window_main.glade", NULL);
+  gtk_builder_add_from_file(builder, "src/glade/window_main.glade", NULL);
 
   window = GTK_WIDGET(gtk_builder_get_object(builder, "window_main"));
   gtk_builder_connect_signals(builder, NULL);
@@ -175,12 +175,24 @@ void print_message(const char *data, size_t len) {
 	gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(g_text_view_messages), &end, 0.1, FALSE, 0, 0);
 }
 
+int exec_command(const char *str) {
+	if (*str == '\0' || *str != '/') {
+		return (0);
+	}
+	if (strncmp(str, "/command ", 9) == 0) {
+		// command !
+		return (1);
+	}
+	return (0);
+}
+
 void send_message() {
-	const char *s = gtk_entry_get_text(GTK_ENTRY(g_entry_message));
-	// const char *s = "nickk:Hello la famille";
-	print_message(s, strlen(s));
-	// print_info("Information spéciale, coucou tout le monde.");
-	update_label_peers(4);
+	const char *input = gtk_entry_get_text(GTK_ENTRY(g_entry_message));
+	if (!exec_command(input)) {
+		print_message(input, strlen(input));
+	}
 	gtk_entry_set_text(GTK_ENTRY(g_entry_message), "");
-	printf("%s\n", s);
+	update_label_peers(4);
+	// print_info("heuuu");
+	// printf("%s\n", input);
 }

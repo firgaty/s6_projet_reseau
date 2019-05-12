@@ -44,6 +44,7 @@ void update_label_infos2(size_t nsym);
 void update_label_peers(size_t nsym);
 void print_message(const char *data, size_t len);
 void print_info(const char *data);
+int exec_command(const char *str);
 void send_message();
 
 #endif
