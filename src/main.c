@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
 
   // test_connect((char*)argv[2]);
   
-  test_connect("1212");
+  add_new_neighbour((unsigned char*)"jch.irif.fr", "1212");
 
   listen_input();
 
