@@ -66,7 +66,7 @@ void update_label_infos2(size_t nsym) {
 	char label[64];
 
 	memset(label, 0, 64);
-	snprintf(label, 64, "Pairs : %d", nsym);
+	snprintf(label, 64, "Pairs : %ld", nsym);
 	gtk_label_set_text(GTK_LABEL(g_label_infos2), label);
 }
 
@@ -74,7 +74,7 @@ void update_label_peers(size_t nsym) {
 	char label[64];
 
 	memset(label, 0, 64);
-	snprintf(label, 64, "Pairs : %d", nsym);
+	snprintf(label, 64, "Pairs : %ld", nsym);
 	gtk_label_set_text(GTK_LABEL(g_label_peers), label);
 }
 

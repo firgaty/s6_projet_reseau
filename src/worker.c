@@ -5,10 +5,14 @@
 void* worker_loop() {
   while (1) {
     printf("worker\n");
-    neighbour_map_t* cur = get_cur_neighbours();
-    neighbour_map_t* pot = get_pot_neighbours();
-    dllist_t* msg_list = get_msg_list();
-    data_map_t* msg_map = get_msg_map();
+    printf("cur\n");
+    neighbour_map_t *cur = get_cur_neighbours();
+    printf("pot\n");
+    neighbour_map_t *pot = get_pot_neighbours();
+    printf("list\n");
+    dllist_t *msg_list = get_msg_list();
+    printf("map\n");
+    data_map_t *msg_map = get_msg_map();
 
     worker_iter_nbr(cur, pot, msg_list, msg_map);
 
@@ -29,13 +33,15 @@ void worker_iter_nbr(neighbour_map_t* cur,
   int rc;
 
   while ((key = map_next(cur, &iter))) {
-    neighbour_entry_t* e = *map_get(cur, key);
-    rc = worker_iter_msg(cur, pot, msg_list, msg_map, e);
+    neighbour_entry_t** e = map_get(cur, key);
+    if(e == NULL)
+      return;
+    rc = worker_iter_msg(cur, pot, msg_list, msg_map, *e);
     if (rc < 0) {
-      dllist_empty(e->msg_to_send, false);
+      dllist_empty(e[0]->msg_to_send, false);
     }
     printf("Neighbour moved to potential.");
-    send_go_away((struct sockaddr_in6 *)e->addr->ai_addr);
+    send_go_away((struct sockaddr_in6 *)e[0]->addr->ai_addr);
     map_transfer_neighbour(cur, pot, (char *)key);
   }
 
@@ -51,7 +57,7 @@ int worker_iter_msg(neighbour_map_t* cur,
 
   if (list->first == NULL)
     return 0;
-  
+
   tlv_t* tab[64];
   size_t count = 0;
   size_t size = 0;

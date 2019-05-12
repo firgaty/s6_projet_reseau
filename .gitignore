@@ -56,3 +56,4 @@ dox/
 .vscode/
 .ycm_extra_conf.py
 vgcore.*
+log*

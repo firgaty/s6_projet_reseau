@@ -175,7 +175,9 @@ void send_hello(struct sockaddr_in6* pair,
   sbuff_t* b = new_sbuff();
   serial_msg(m, b);
   udp_send(pair, b);
-  free_msg(m, true);
+  free_hello_body(t->body);
+  free(t);
+  free(m);
   free_sbuff(b);
 }
 
@@ -224,8 +226,8 @@ void process_hello(hello_body_t* b, struct sockaddr_in6* client) {
   neighbour_map_t* pot = get_pot_neighbours();
 
   char* key = new_neighbour_key_sock(client);
-  neighbour_entry_t* e_cur = *map_get(cur, key);
-  neighbour_entry_t* e_pot = *map_get(pot, key);
+  neighbour_entry_t** e_cur = map_get(cur, key);
+  neighbour_entry_t** e_pot = map_get(pot, key);
 
   if (e_cur != NULL) {
   } else if (e_cur == NULL && e_pot == NULL) {
