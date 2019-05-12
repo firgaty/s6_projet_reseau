@@ -48,13 +48,11 @@ short map_add_neighbour_entry(neighbour_map_t* map, neighbour_entry_t* e);
  * To delete the entry directly see map_delete_entry()
  *
  * @param map Map to use.
- * @param ip IP.
- * @param port Port.
+ * @param key Key.
  * @return neighbour_entry_t* Entry removed.
  */
 neighbour_entry_t* map_pop_neighbour(neighbour_map_t* map,
-                                     char* ip,
-                                     uint16_t port);
+                                     char* key);
 
 /**
  * @brief Deletes and frees allocated resources to an entry in a map.
@@ -70,14 +68,12 @@ void map_delete_entry(neighbour_map_t* map, char* ip, uint16_t port);
  *
  * @param in Map to take the entry from.
  * @param out Map to transfer the entry to.
- * @param ip IP.
- * @param port Port.
+ * @param key Key
  * @return short 1 if success else 0.
  */
 short map_transfer_neighbour(neighbour_map_t* in,
                              neighbour_map_t* out,
-                             char* ip,
-                             uint16_t port);
+                             char* key);
 
 void print_neighbour_entry(neighbour_entry_t* e);
 void print_neighbour_map(neighbour_map_t* m);

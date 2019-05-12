@@ -20,6 +20,7 @@
 #include "serialization.h"
 #include "shared_resources.h"
 #include "types.h"
+#include "msg_list.h"
 
 #define ID_BITS_LEN 64
 #define REQ_LEN 4096
@@ -49,12 +50,12 @@ void send_go_away(struct sockaddr_in6* pair);
 
 void* process_datagram(unsigned char* input,
                        size_t len,
-                       struct sockaddr_in6* client);
-void process_hello(hello_body_t* b, struct sockaddr_in6* client);
+                       struct sockaddr_in6* pair);
+void process_hello(hello_body_t* b, struct sockaddr_in6* pair);
 void process_neighbour(neighbour_body_t* b);
-void process_data(data_body_t* b, struct sockaddr_in6* client);
+void process_data(data_body_t* b, struct sockaddr_in6* pair);
 void process_warning(warning_body_t* b);
-void process_ack(ack_body_t* b);
-void process_go_away(go_away_body_t* b);
+void process_ack(ack_body_t *b, struct sockaddr_in6* pair);
+void process_go_away(go_away_body_t *b, struct sockaddr_in6* pair);
 
 #endif  // ! UDP_H_

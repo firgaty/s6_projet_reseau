@@ -10,6 +10,7 @@
 #include <unistd.h>
 
 #include "connect.h"
+#include "neighbour_map.h"
 
 void* udp_server() {
   printf("Server start.\n");
@@ -39,7 +40,7 @@ void* udp_server() {
 
   if (bind(sock, (struct sockaddr*)&server, sizeof(server)) < 0) {
     perror("Erreur bind.\n");
-    return 0;
+    exit(-1);
   }
 
   while (1) {
@@ -128,7 +129,6 @@ void* process_datagram(unsigned char* input,
   for (int i = 0; i < msg->tlv_nb; i++) {
     switch (msg->body[i]->type) {
       case TLV_PAD1:
-        return 0;
         break;
       case TLV_PADN:
         return 0;
@@ -137,22 +137,30 @@ void* process_datagram(unsigned char* input,
         process_hello((hello_body_t*)msg->body[i]->body, client);
         break;
       case TLV_NEIGHBOUR:
+        process_neighbour((neighbour_body_t*)msg->body[i]->body);
         break;
       case TLV_DATA:
+        process_data((data_body_t*)msg->body[i]->body, client);
         break;
       case TLV_ACK:
+        process_ack((ack_body_t*)msg->body[i]->body, client);
         break;
       case TLV_GO_AWAY:
+        process_go_away((go_away_body_t*)msg->body[i]->body, client);
         break;
       case TLV_WARNING:
+        process_warning((warning_body_t*)msg->body[i]->body);
         break;
     }
   }
+
+  free_msg(msg, false);
+  free_sbuff(buffer);
   return 0;
 }
 
 void send_msg(struct sockaddr_in6* pair, msg_t* msg) {
-  sbuff_t *buff = new_sbuff();
+  sbuff_t* buff = new_sbuff();
   serial_msg(msg, buff);
   udp_send(pair, buff);
   free_sbuff(buff);
@@ -193,7 +201,8 @@ void send_go_away(struct sockaddr_in6* pair) {
 
   udp_send(pair, buff);
 
-  free_msg(m, true);
+  free(t);
+  free(m);
   free_sbuff(buff);
 }
 
@@ -210,20 +219,50 @@ void process_hello(hello_body_t* b, struct sockaddr_in6* client) {
     send_hello(client, true, b->source_id, client_id);
   }
 
+  // ajout si pas dans les neighbour.
+  neighbour_map_t* cur = get_cur_neighbours();
+  neighbour_map_t* pot = get_pot_neighbours();
+
+  char* key = new_neighbour_key_sock(client);
+  neighbour_entry_t* e_cur = *map_get(cur, key);
+  neighbour_entry_t* e_pot = *map_get(pot, key);
+
+  if (e_cur != NULL) {
+  } else if (e_cur == NULL && e_pot == NULL) {
+    char str_ip[INET6_ADDRSTRLEN];
+    inet_ntop(AF_INET6, &client, str_ip, INET6_ADDRSTRLEN);
+    char str_port[10];
+    snprintf(str_port, 10, "%u", client->sin6_port);
+    add_new_neighbour((unsigned char*)str_ip, (char*)str_port);
+  } else if (e_pot != NULL) {
+    map_transfer_neighbour(pot, cur, key);
+  }
+
+  free(key);
+
+  pthread_mutex_unlock(&cur_neighbours_lock);
+  pthread_mutex_unlock(&pot_neighbours_lock);
+
   free_hello_body(b);
 }
 
-void process_neighbour(neighbour_body_t* b);
+void process_neighbour(neighbour_body_t* b) {
+  char str_ip[INET6_ADDRSTRLEN];
+  inet_ntop(AF_INET6, &b->ip, str_ip, INET6_ADDRSTRLEN);
+  char str_port[10];
+  snprintf(str_port, 10, "%u", b->port);
+
+  add_new_neighbour((unsigned char*)str_ip, (char*)str_port);
+  free_neighbour_body(b);
+}
+
 void process_data(data_body_t* b, struct sockaddr_in6* client) {
+  printf("DATA\n");
   // envoit du TLV ACK.
   send_ack(client, b->sender_id, b->nonce);
 
   // Traitement.
-  dllist_t* l = get_msg_list();
-
-  // TODO
-
-  pthread_mutex_unlock(&msg_list_lock);
+  add_msg(b);
 
   // Si d'un type non implementé, on ne fait rien.
   if (b->type != 0)
@@ -233,11 +272,38 @@ void process_data(data_body_t* b, struct sockaddr_in6* client) {
   printf("%.*s", (int)b->data_len, b->data);
 }
 void process_warning(warning_body_t* b) {
-  printf("/!\\ %.*s\n", (int)b->msg_len, b->message);
-
   // print warning
+  printf("/!\\ %.*s\n", (int)b->msg_len, b->message);
+  free_warning_body(b);
 }
 
-void process_ack(ack_body_t* b);
+void process_ack(ack_body_t* b, struct sockaddr_in6* pair) {
+  char* key = new_neighbour_key_sock(pair);
+  neighbour_map_t* cur = get_cur_neighbours();
 
-void process_go_away(go_away_body_t* b);
+  neighbour_entry_t* e = *map_get(cur, key);
+  if (e != NULL) {
+    rm_nbr_msg(b->sender_id, b->nonce, e->msg_to_send);
+  }
+  pthread_mutex_unlock(&cur_neighbours_lock);
+
+  free_ack_body(b);
+}
+
+void process_go_away(go_away_body_t* b, struct sockaddr_in6* pair) {
+  neighbour_map_t* cur = get_cur_neighbours();
+  neighbour_map_t* pot = get_pot_neighbours();
+
+  char* key = new_neighbour_key_sock(pair);
+
+  neighbour_entry_t* e = *map_get(cur, key);
+  dllist_empty(e->msg_to_send, false);
+
+  map_transfer_neighbour(cur, pot, key);
+  free(key);
+
+  pthread_mutex_unlock(&cur_neighbours_lock);
+  pthread_mutex_unlock(&pot_neighbours_lock);
+
+  free_go_away_body(b);
+}
