@@ -32,6 +32,7 @@ bool add_msg(data_body_t* b) {
   dllist_t* l = get_msg_list();
   dllist_push_front(l, DLL_STRING, msg_key);
 
+  printf("add_msg\n");
   neighbour_map_t* m = get_cur_neighbours();
   const char* key;
   map_iter_t iter = map_iter(&m);
@@ -44,7 +45,7 @@ bool add_msg(data_body_t* b) {
   pthread_mutex_unlock(&cur_neighbours_lock);
   pthread_mutex_unlock(&msg_map_lock);
   pthread_mutex_unlock(&msg_list_lock);
-  
+
   return 1;
 }
 
@@ -67,6 +68,8 @@ bool rm_msg() {
     return false;
   }
   data_body_t* body = *map_get(data_map, key);
+
+    printf("rm_msg\n");
 
   neighbour_map_t* m = get_cur_neighbours();
   const char* nkey;

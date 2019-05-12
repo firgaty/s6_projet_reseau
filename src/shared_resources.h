@@ -22,6 +22,11 @@ pthread_mutex_t pot_neighbours_lock;
 pthread_mutex_t msg_map_lock;
 pthread_mutex_t msg_list_lock;
 
+extern neighbour_map_t* g_cur_neighbours;
+extern neighbour_map_t* g_pot_neighbours;
+extern data_map_t* g_msg_map;
+extern dllist_t* g_msg_list;
+
 /**
  * @brief Get the cur neighbours object
  *

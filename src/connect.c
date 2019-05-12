@@ -222,7 +222,8 @@ void process_hello(hello_body_t* b, struct sockaddr_in6* client) {
   }
 
   // ajout si pas dans les neighbour.
-  neighbour_map_t* cur = get_cur_neighbours();
+  printf("process_hello\n");
+  neighbour_map_t *cur = get_cur_neighbours();
   neighbour_map_t* pot = get_pot_neighbours();
 
   char* key = new_neighbour_key_sock(client);
@@ -281,6 +282,7 @@ void process_warning(warning_body_t* b) {
 
 void process_ack(ack_body_t* b, struct sockaddr_in6* pair) {
   char* key = new_neighbour_key_sock(pair);
+  printf("process_ack\n");
   neighbour_map_t* cur = get_cur_neighbours();
 
   neighbour_entry_t* e = *map_get(cur, key);
@@ -293,6 +295,7 @@ void process_ack(ack_body_t* b, struct sockaddr_in6* pair) {
 }
 
 void process_go_away(go_away_body_t* b, struct sockaddr_in6* pair) {
+  printf("go_away\n");
   neighbour_map_t* cur = get_cur_neighbours();
   neighbour_map_t* pot = get_pot_neighbours();
 
