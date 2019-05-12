@@ -19,11 +19,13 @@
 #include "types.h"
 #include "serialization.h"
 
-#define MSG_USER 0
-#define MSG_INFO 1
+// #define MSG_USER 0
+// #define MSG_INFO 1
+#define HIDE_EMPTY_MESSAGES FALSE
 
-// GtkWidget *g_label_infos;
 GtkWidget *window;
+GtkLabel *g_label_infos2;
+GtkLabel *g_label_peers;
 GtkWidget *g_text_view_messages;
 GtkTextBuffer *g_text_view_messages_buffer;
 GtkWidget *g_entry_message;
@@ -36,10 +38,12 @@ void on_entry_message_activate();
 void on_button_send_clicked();
 
 size_t nick_len(const char *data, size_t data_len);
+
 void update_title(size_t nsym);
-void print_message(const char *data, size_t len, size_t type);
+void update_label_infos2(size_t nsym);
+void update_label_peers(size_t nsym);
+void print_message(const char *data, size_t len);
+void print_info(const char *data);
 void send_message();
-
-
 
 #endif

@@ -1,0 +1,103 @@
+     <meta charset="utf-8" emacsmode="-*- markdown -*-"><link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/apidoc.css?">
+
+                          **Projet de programmation réseau**
+                          miaouchat : « Groupe de discussion par inondation fiable »
+                          __Félix Desmaretz__ + __Louis Gavalda__
+
+Nous avons implementé le protocole spécifié dans le [sujet](https://www.irif.fr/~jch/enseignement/prog-reseau/projet.pdf) proposé par Juliusz Chroboczek afin de créer un chat P2P (ou _groupe de discussion pair à pair_).
+
+Ce rapport rend compte des choix qui ont été faits.
+
+## Utilisation
+
+### Compilation (tl;dr: `make && ./miaouchat`)
+
+Il faut bien sûr le compiler avant de pouvoir le lancer. Les commandes suivantes sont à exécuter à la racine du projet et ont les effets suivants :
+
+- `make` génère un fichier exécutable nommé `miaouchat` : c’est notre programme, fraîchement compilé, bien joué ! Vous pouvez ensuite le lancer en tapant `./miaouchat` dans votre terminal.
+- `doxygen Doxyfile` génère automatiquement la documentation (que ce compte rendu vient compléter) à partir de commentaires présents directement dans les sources. Ensuite, la commande `./manual` vous permet d’ouvrir ladite documentation dans un nouvel onglet du navigateur.
+
+### Interface graphique (tl;dr: on peut discuter avec les autres gens)
+
+Lorsque __miaouchat__ se lance, une fenêtre apparaît. Rien d’extravagant : nous avons voulu nous rapprocher du style minimaliste des interfaces [IRC](https://fr.wikipedia.org/wiki/Internet_Relay_Chat) d’antan, au sein desquelles un discussion se voyait réduite à l’essentiel.
+
+En haut à droite s’affiche le nombre de pairs/voisins symétriques auxquels notre programme est connecté. Au milieu, la plus grande partie de la fenêtre contient la liste des messages reçus depuis le démarrage. Pour discuter, c’est enfantin, ça se passerait même d’instructions : il suffit d’écrire un message dans le champ de texte (en bas de la fenêtre) puis d’appuyer sur Entrée pour l’envoyer.
+
+L’heure d’envoi est spécifiée avant chaque message, ainsi que -- normalement -- le pseudo de l’émetteur. On a donc un affichage qui ressemble plus ou moins à :
+
+~~~
+[14:26:44] <bob> mais c’est top !!
+[14:26:55] <alice> comme tu dis ;-)
+[14:27:02] <bob> au top
+[14:27:06] <bob> miaou 🐈
+[14:27:18] <alice> wouf 🐕🐕
+[14:27:25] <bob> ...
+~~~
+
+
+ Des messages à propos de l’exécution du programme peuvent également s’afficher en orange.
+
+## Sous le capot
+
+### Particularités du projet (tl;dr: protocole bien pensé, pour l’usage)
+
+On peut remercier l’auteur du sujet d’avoir réfléchi sérieusement à son protocole. La spécification y est relativement précise, et des conseils sont mêmes fournis afin de nous guider dans l’implémentation.
+
+Il s’agit d‘un protocole pair à pair dans lequels les messages sont « inondés » sur le réseau. Chaque membre du réseau reçoit l’intégralité des messages, qu’ils s’adressent à lui ou non. (Un membre, ou nœud, est un logiciel qui exécute une implémentation du protocole, et qui forme un réseau avec l’ensemble des autres membres avec qui il est « connecté ».)
+
+Lorsqu’un message adressé à un récepteur précis est émis, ce message est transmis à chacun des voisins de l’émetteur via __UDP__. De manière récursive, chacun transmet (_broadcast_) à son tour le message jusqu’à qu’il ait été reçu par tous les membres du réseau.
+
+Une telle manière de procéder induit évidemment des limitations, et c’est pourquoi on se contente d’utiliser ce protocole pour échanger des messages textuels. Sans même parler de fragmentation, si un message/fichier lourd devait s’échanger entre deux utilisateurs, il se verrait propagé sur tout le réseau, ce qui constituerait un terrible gaspillage de bande passante (étant donné que le message/fichier ne s’adresse qu’à une personne).
+
+Notre programme, dans sa partie réseau, s’appuie exclusivement sur __UDP__ qui, comme vous le savez, est dépourvu de contrôle d’erreurs (réémission, fragmentation, etc.). Pour construire un véritable groupe de discussion, il faut donc gérer tout un tas de choses (« à qui est destiné tel ou tel message ? » ; « qui est autorisé à m’envoyer un message ? »).
+
+Les données traitées par l’application sont échangées sous forme de __TLV__ (pour _Type, Length, Value_) dont les formats sont précisément définis.
+
+
+### C pas sorcier (tl;dr: aïe c’est bas niveau)
+
+Il était imposé d’écrire le programme en C. Chouette language. Pour de nombreuses raisons, il est fort adapté à l’apprentissage de la programmation réseau (on se trouve à « bas niveau »).
+
+Du point de vue de son architecture, notre programme est simple, il se contente de coller au protocole. Ceci dit, en C, puisqu’il faut gérer la mémoire, etc., il est pratique de créer tout un tas de types de données, de routines, pour se simplifier la vie dans la suite du développement. Les concepts à manipuler ont beau être simples, la logique élémentaire, il nous a fallu écrire plusieurs milliers de lignes de code ; là où une implémentation en Python (par exemple) aurait requis tout au plus quelques centaines de lignes.
+
+Pas de souci avec ça, hein, au contraire, ça nous fait des choses à détailler dans ce compte rendu. Mais tout de même : coder en C prend du temps.
+
+
+### Décisions prises (tl;dr: interface en GTK)
+
+**miaouchat**, c’est le nom que nous avons donné à notre logiciel.
+
+Par contre, nous tenions à avoir une vraie interface graphique, bien propre, afin que __miaouchat__ ne consiste pas seulement en une _proof of concept_ mais soit vraiment agréable à utiliser pour des personnes qui n’ont pas l’habitude du terminal.
+
+C’est GTK qui nous a paru être le meilleur choix, car GTK est une librairie...
+
+- écrite en C, et s’utilise donc nativement dans ce langage ;
+- éprouvée (elle existe depuis plus de vingt ans) ; on dispose de suffisamment d’exemples pour se dépatouiller et obtenir ce que l’on souhaite, contrairement à la plupart des autres solutions exotiques ;
+- installée presque partout ;
+- qui permet d’obtenir un résultat satisfaisant -- en terme d’esthétique -- assez rapidement.
+
+
+### Beaucoup de fichiers (tl;dr: c’est bien rangé)
+
+Fichier (.h/.c) | Contient | Notes
+----------------|----------|------
+dllist | fonctions de manipulation de listes doublement chaînées de type `dllist_t`. ||
+map | sources de la hashmap. | auteur : [rxi, sur Github](https://github.com/rxi/map) |
+msg | méthodes de manipulation et transformations des TLV et messages. ||
+test | tests écrits durant le développement. ||
+types | types non standards, afin de les centraliser et d'éviter les conflits d'importation. ||
+neighbour | implémentent les différentes listes de voisins et leur manipulations. ||
+
+## Logique de fonctionnement
+
+### Relation entre voisins
+
+![](projet/img/voisins_dia.png)
+
+
+### Réception d’un message
+
+![](projet/img/reception_data_dia.png)
+
+<style class="fallback">body{visibility:hidden}</style><script>markdeepOptions={tocStyle:'medium'};</script>
+<!-- Markdeep: --><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js?" charset="utf-8"></script>
