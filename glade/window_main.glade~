@@ -91,12 +91,10 @@ Author: Félix Desmaretz, Louis Gavalda
             <property name="can_focus">False</property>
             <property name="column_homogeneous">True</property>
             <child>
-              <object class="GtkLabel" id="label_sym">
+              <object class="GtkLabel" id="label_infos">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_top">5</property>
-                <property name="margin_bottom">5</property>
-                <property name="label" translatable="yes">Voisins sym. : 0</property>
+                <property name="label" translatable="yes">(c) 2019</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -107,6 +105,8 @@ Author: Félix Desmaretz, Louis Gavalda
               <object class="GtkLabel" id="label_ram">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="margin_top">10</property>
+                <property name="margin_bottom">10</property>
                 <property name="label" translatable="yes">RAM : 0.4%</property>
               </object>
               <packing>
@@ -135,7 +135,7 @@ Author: Félix Desmaretz, Louis Gavalda
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="label_infos">
+              <object class="GtkLabel" id="label_peers">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
               </object>
