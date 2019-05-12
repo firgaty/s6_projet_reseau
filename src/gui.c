@@ -228,8 +228,7 @@ void send_message() {
 		data = calloc(datalen, sizeof(char));
 		snprintf(data, datalen, "%s:%s", nick, message);
 		// add_msg(new_data_body(get_client_id(), rand(), 0, data, strlen(data)));
-		free(data);
-		print_message(message, strlen(message));
+		print_message(data, strlen(data));
 	}
 	gtk_entry_set_text(GTK_ENTRY(g_entry_message), "");
 	update_label_peers(0);

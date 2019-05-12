@@ -68,6 +68,8 @@ Mais tout de même : coder en C prend du temps.
 
 ## Décisions prises (tl;dr: interface avec GTK)
 
+Nous avons décidé d'utiliser des threads, un pour la partie serveur, un pour la partie qui écoute les entrées utilisateur et un qui s'occupe d'envoyer de l'inondation.
+
 **miaouchat**, c’est le nom que nous avons donné à notre logiciel.
 
 Par contre, nous tenions à avoir une vraie interface graphique, bien propre, afin que __miaouchat__ ne consiste pas seulement en une _proof of concept_ mais soit vraiment agréable à utiliser pour des personnes qui n’ont pas l’habitude du terminal.
@@ -100,7 +102,7 @@ worker |||
 
 # Logique de fonctionnement
 
-Les diagrammes ci-dessous illustrent la logique de notre programme.
+<!-- Les diagrammes ci-dessous illustrent la logique de notre programme.
 
 ### Relation entre voisins
 
@@ -109,13 +111,28 @@ Les diagrammes ci-dessous illustrent la logique de notre programme.
 
 ## Réception d’un message
 
-![](doc/projet/img/reception_data_dia.png)
+![](projet/img/reception_data_dia.png) -->
+
+## Structures de stockage que l'on a : 
+
+- une hashmap de messages reçus.
+- une liste contenant les clés des messages ordonées par ordre d'arrivée.
+- une hashmap de voisins courants.
+- une hashmap de voisins potentiels.
+
+Chaque voisins courant a une liste de messages qui lui reste à innonder.
+
+## Découverte de voisins :
+
+On peut passer en paramêtre à la messagerie une string contenant l'addresse et une autre le port d'un pair. Ensuite, à l'aide d'un getaddrinfo(), on récuperera les addrinfo* correspondant à toutes les paires possible à cette paire adresse/port qui seront stockées soit dans la hashmap de voisins courants si on arrive à y envoyer un TLV HELLO court, sinon dans la hasmap des voisins potentiels.
+Lorsqu'on reçoit un TLV HELLO court, on regarde si l'emetteur fait partie de nos hashmaps de voisins, sinon on récupère sont adresse et son port et on le passe à la fonction précédente.
+
+## Inondation:
+
+Lorsque l'on reçoit ou envoit un message, on place tout d'abort le TLV DATA dans la liste des messages à émettre de chaque voisins en initialisant le champ `send_time` à la data à laquelle l'envoit est prévu.
+Dans le thread `worker`, on a une boucle qui à lieu toutes les 0.5 secondes et qui regarde la liste de messages à émettre chaque voisin. Si un message à une date d'emission (`send_time`) antérieure à la date actuelle, alors il est stocké dans un tableau de TLV DATA. lorsque la taille des TLV dans ledit tableau s'apprête à dépasser le PMTU du voisin considéré, on les envoit en un seul message. On réinitialise la date d'émission prévue par la même occasion.
 
 ~
-
-Voilà.
-
-Pour toute question, nous nous tenons à votre disposition.
 
 Merci d’avoir lu.
 
